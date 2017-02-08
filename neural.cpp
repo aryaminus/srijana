@@ -30,4 +30,8 @@ class neural{
 		float *weights;
 		
 	public:
+        neural();
 };
+
+neural :: neural(){
+}
