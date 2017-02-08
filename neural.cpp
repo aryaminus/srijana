@@ -10,3 +10,8 @@ typedef struct node{
 	float *errors;
 	float output;
 } node;
+
+typedef struct layer{
+	int num_nodes;
+	node *chr;
+} layer;
