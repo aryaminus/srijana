@@ -38,4 +38,10 @@ neural :: neural(){
 }
 
 neural :: neural(int in, int out, int num, int hn, float lrate){
+    num_inputs = in;
+	num_outputs = out;
+	num_layers = num;
+	num_hid_nodes = hn;
+	num_weights = 0;
+	leaning_rate = lrate;
 }
