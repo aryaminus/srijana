@@ -31,7 +31,11 @@ class neural{
 		
 	public:
         neural();
+        neural(int in, int out, int num, int hn, float lrate);
 };
 
 neural :: neural(){
+}
+
+neural :: neural(int in, int out, int num, int hn, float lrate){
 }
