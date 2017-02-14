@@ -44,4 +44,7 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
 	num_hid_nodes = hn;
 	num_weights = 0;
 	leaning_rate = lrate;
+    layers = (layer *)malloc(sizeof(layer) * num); //Memory Allocation for layers struct
+	layers[0].num_nodes = in; //num_modes takes num_input value
+	layers[0].chr = (node *)malloc(sizeof(node) * in); //chr node memory allocation
 }
