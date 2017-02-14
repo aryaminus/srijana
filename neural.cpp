@@ -74,5 +74,7 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
 			for(int e = 0; e < nd + 1; e++) (layers[i].chr[j]).errors[e] = 0.0;
 		}
 	}
-
+	int nd = layers[num - 2].num_nodes; //set nd to num_nodes of lay_num-2
+	layers[num - 1].num_nodes = out; //set num_nodes of lay_num-1 to out
+	layers[num - 1].chr = (node *)malloc(sizeof(node) * out); // set char of lay_num-1 for memory allocation to out
 }
