@@ -47,4 +47,12 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
     layers = (layer *)malloc(sizeof(layer) * num); //Memory Allocation for layers struct
 	layers[0].num_nodes = in; //num_modes takes num_input value
 	layers[0].chr = (node *)malloc(sizeof(node) * in); //chr node memory allocation
+    for(int i = 0; i < in; i++){
+		(layers[0].chr[i]).num_inputs = 1; //put 1 as num_inputs of each chr of lay0
+		num_weights += 1; //increment num_weight by 1
+		(layers[0].chr[i]).weights = (float *)malloc(sizeof(float) * (1)); //Memory Allocation for weights
+		(layers[0].chr[i]).inputs = (float *)malloc(sizeof(float) * (1)); //Memory Allocation for inputs
+		(layers[0].chr[i]).errors = (float *)malloc(sizeof(float) * (1)); //Memory Allocation for errors
+		for(int e = 0; e < 1; e++) (layers[0].chr[i]).errors[e] = 0.0; // set 0.0 error initially
+	}
 }
