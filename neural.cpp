@@ -44,9 +44,11 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
 	num_hid_nodes = hn;
 	num_weights = 0;
 	leaning_rate = lrate;
+    
     layers = (layer *)malloc(sizeof(layer) * num); //Memory Allocation for layers struct
 	layers[0].num_nodes = in; //num_modes takes num_input value
 	layers[0].chr = (node *)malloc(sizeof(node) * in); //chr node memory allocation
+    
     for(int i = 0; i < in; i++){
 		(layers[0].chr[i]).num_inputs = 1; //put 1 as num_inputs of each chr of lay0
 		num_weights += 1; //increment num_weight by 1
@@ -55,4 +57,22 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
 		(layers[0].chr[i]).errors = (float *)malloc(sizeof(float) * (1)); //Memory Allocation for errors
 		for(int e = 0; e < 1; e++) (layers[0].chr[i]).errors[e] = 0.0; // set 0.0 error initially
 	}
+
+    for(int i = 1; i < num - 1; i++){
+		layers[i].chr = (node *)malloc(sizeof(node) * hn); //Memory Allocation for chr node of lay_i with hn value
+		layers[i].num_nodes = hn; //Set hn to num_nodes for each layer
+		int nd = layers[i - 1].num_nodes; // set nd as previous layers num_nodes value
+		for(int j = 0; j < hn; j++){
+			(layers[i].chr[j]).num_inputs = nd + 1; //set num_inputs of node chr_j of lay_i to nd+1
+			num_weights += nd + 1; //Increase num_weight with nd + 1
+			(layers[i].chr[j]).weights = (float *)malloc(sizeof(float) * (nd + 1));
+			(layers[i].chr[j]).inputs = (float *)malloc(sizeof(float) * (nd + 1));
+			(layers[i].chr[j]).errors = (float *)malloc(sizeof(float) * (nd + 1));
+            /*
+                Memory allocation of chr_j of lay_i to nd+1 vlaue for weights,inputs and errors
+            */
+			for(int e = 0; e < nd + 1; e++) (layers[i].chr[j]).errors[e] = 0.0;
+		}
+	}
+
 }
