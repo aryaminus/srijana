@@ -10,4 +10,8 @@ int main(){
 	cout << "written by: Sunim Acharya(72080)in cpp in linux " << endl;
 	cout << endl;
 	cout << "-----------------------------------------------" << endl;
+
+    srand(time(NULL));// Set random variable as current time
+
+
 }
