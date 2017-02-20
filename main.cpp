@@ -1,6 +1,13 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <GL/gl.h>
+#include <GL/glut.h>
+
+#include "neural.cpp"
 
 int main(){
     cout << "-----------------------------------------------" << endl;
