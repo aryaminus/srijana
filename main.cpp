@@ -11,6 +11,16 @@
 
 using namespace std;
 
+typedef struct sq{
+	int x;
+	int y;
+	int mx;
+	int my;
+	struct sq *nexploration_ratet;
+} sq;
+
+sq *snake = NULL;
+
 neural *net;
 
 int num_layers   =      2;
@@ -18,6 +28,11 @@ int num_inputs   =      6;
 int num_outputs  =      1;
 
 float learning_rate     = 0.0000001;
+
+void start(){
+	snake = NULL;
+
+}
 
 int main(){
     cout << "-----------------------------------------------" << endl;
@@ -32,6 +47,8 @@ int main(){
 
     net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
 
-    //net -> init();
+    net -> init();
+
+    start(); //Start snake layout with initial values
 
 }
