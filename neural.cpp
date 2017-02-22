@@ -32,6 +32,8 @@ class neural{
 	public:
         neural();
         neural(int in, int out, int num, int hn, float lrate);
+        void init();
+        void put_weights(float *weights); 
 };
 
 neural :: neural(){
@@ -93,4 +95,32 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
 
     weights = (float *)malloc(sizeof(float) * num_weights); //Memory Allocation of weights to num_weights
 
+}
+
+void neural :: init(){
+	float weights[num_weights];
+	for(int i = 0; i < num_weights; i++){
+		 weights[i] = (float)rand() / (float)RAND_MAX - 0.5; //Setup weight_i to rand variable by rand_max
+	}
+	put_weights(weights);
+	for(int i = num_layers - 2; i >= 0; i--){
+		for(int j = 0; j < layers[i].num_nodes ; j++){
+			for(int k = 0; k < (layers[i].chr[j]).num_inputs; k++){	
+				(layers[i].chr[j]).weights[k] = 1; //set weight_k ie num_inputs range for chr_j of layers_i to 1
+			}
+		}
+	}
+}
+
+void neural :: put_weights(float *weights){
+	int n = 0;
+	for(int i = 0; i < num_layers; i++){
+		for(int j = 0; j < layers[i].num_nodes; j++){
+
+			for(int k = 0; k < (layers[i].chr[j]).num_inputs; k++){
+				(layers[i].chr[j]).weights[k] = weights[n]; //set weight_k ie num_inputs range for chr_j of layers_i to 1 to weight_n
+				n++; //N increment
+			}
+		}
+	}
 }

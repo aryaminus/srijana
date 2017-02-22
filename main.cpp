@@ -32,4 +32,6 @@ int main(){
 
     net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
 
+    //net -> init();
+
 }
