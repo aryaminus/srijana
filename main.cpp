@@ -31,6 +31,9 @@ int num_outputs  =      1;
 
 float learning_rate     = 0.0000001;
 
+int food_x       =     -6;
+int food_y       =     -6;
+
 void start(){
 	snake = NULL;
     add(0, 0);
@@ -52,6 +55,25 @@ void add(int x, int y){
 	snake = tmp;
 }
 
+void set_f(){
+	bool f = true;
+	while(f){
+		srand(time(NULL));
+		food_x = (rand() % 34) - 17;	 
+		srand(time(NULL));
+		food_y = (rand() % 34) - 17;
+		sq *p = snake;
+		while(p != NULL){
+			if(p -> x == food_x && p -> y == food_y){
+				f = true;
+				break;		
+			}	
+			f = false;
+			p = p -> nexploration_ratet;
+		}	
+	}
+}
+
 int main(){
     cout << "-----------------------------------------------" << endl;
 	cout << endl;
@@ -68,5 +90,7 @@ int main(){
     net -> init();
 
     start(); //Start snake layout with initial values
+
+    set_f(); //Setup food point cordinates
 
 }
