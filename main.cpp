@@ -74,7 +74,7 @@ void set_f(){
 	}
 }
 
-int main(){
+int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
 	cout << endl;
 	cout << "       --- Srijana - A OpenGL & NN Game ---    " << endl;
@@ -92,5 +92,10 @@ int main(){
     start(); //Start snake layout with initial values
 
     set_f(); //Setup food point cordinates
+
+    glutInit(&argc,argv); //Setup glutInit
+    glutInitDisplayMode ( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //Set Display window
+    glutInitWindowSize(450,450); //Window Size
+	glutInitWindowPosition(500,0); //Window Position
 
 }
