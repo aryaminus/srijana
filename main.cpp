@@ -97,5 +97,6 @@ int main(int argc, char** argv){
     glutInitDisplayMode ( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //Set Display window
     glutInitWindowSize(450,450); //Window Size
 	glutInitWindowPosition(500,0); //Window Position
+    glutCreateWindow("Srijana : A C and OpenGL game with NN");
 
 }
