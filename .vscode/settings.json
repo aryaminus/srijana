@@ -2,6 +2,7 @@
     "files.associations": {
         "cstdlib": "cpp",
         "iostream": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "*.tcc": "cpp"
     }
 }

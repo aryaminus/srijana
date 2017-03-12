@@ -74,6 +74,23 @@ void set_f(){
 	}
 }
 
+void init()
+{
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);	
+	glLoadIdentity ();
+	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+
+	GLfloat acolor[] = {1.4, 1.4, 1.4, 1.0};
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);
+
+}
+
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
 	cout << endl;
@@ -97,6 +114,8 @@ int main(int argc, char** argv){
     glutInitDisplayMode ( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //Set Display window
     glutInitWindowSize(450,450); //Window Size
 	glutInitWindowPosition(500,0); //Window Position
-    glutCreateWindow("Srijana : A C and OpenGL game with NN");
+    glutCreateWindow("Srijana : A C and OpenGL game with NN"); //Window with the "..." name
+
+    init();
 
 }
