@@ -34,6 +34,10 @@ float learning_rate     = 0.0000001;
 int food_x       =     -6;
 int food_y       =     -6;
 
+bool  pus        =  false;
+int iterations   =      0;
+int	  exploration_rate  = 	     40;
+
 void start(){
 	snake = NULL;
     add(0, 0);
@@ -91,6 +95,26 @@ void init()
 
 }
 
+void myIdleFunc(int a) {
+	if(!pus){
+		itera();
+	}
+	cout << "iterations : " << iterations << " score : " << sc << endl;
+	glutPostRedisplay();
+	glutTimerFunc(tmp, myIdleFunc, 0);
+}
+
+void itera(){
+	iterations++; //Increment iterations
+	int sx = snake -> x; 
+	int sy = snake -> y;
+		
+	float inputs[6];
+	int sx1 = sx;
+	int sy1 = sy;
+	
+}
+
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
 	cout << endl;
@@ -116,6 +140,10 @@ int main(int argc, char** argv){
 	glutInitWindowPosition(500,0); //Window Position
     glutCreateWindow("Srijana : A C and OpenGL game with NN"); //Window with the "..." name
 
-    init();
+    init(); //GL Setup
+
+    glutTimerFunc(400, myIdleFunc, 0); //Timer setup
+
+
 
 }
