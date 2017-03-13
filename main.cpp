@@ -36,6 +36,9 @@ int food_y       =     -6;
 
 bool  pus        =  false;
 int iterations   =      0;
+int sc           =      0;
+int tmp          =     50;
+
 int	  exploration_rate  = 	     40;
 
 void start(){
@@ -113,7 +116,13 @@ void itera(){
 	int sx1 = sx;
 	int sy1 = sy;
 	
+	float new_q;
+	if(rand() % 100 > exploration_rate){
+		new_q = max_q(sx, sy, food_x, food_y);
+	}
 }
+
+
 
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
