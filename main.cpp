@@ -122,7 +122,29 @@ void itera(){
 	}
 }
 
+float max_q(int sx, int sy, int food_x, int food_y){
+	
+	float new_q = 0.0;
+	int sx1 = sx + 1; // increment in x-axis
+	int sy1 = sy;
+	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx; //decrement mx with x of last
+		sy1 = last -> y - last -> my; //decrement my with y of last
+	}
+		
+}
 
+bool check_body(int x, int y){
+	if(x == snake -> nexploration_ratet -> x && y == snake -> nexploration_ratet -> y) return true; //nexploration_ratet x,y is same as x,y
+	return false;
+}
+
+sq *get_last(){
+	sq *p = snake;
+	while(p -> nexploration_ratet != NULL) p = p -> nexploration_ratet; //proceed till last nexploration_ratet
+	return p;
+}
 
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
