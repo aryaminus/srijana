@@ -132,6 +132,8 @@ float max_q(int sx, int sy, int food_x, int food_y){
 		sx1 = last -> x - last -> mx; //decrement mx with x of last
 		sy1 = last -> y - last -> my; //decrement my with y of last
 	}
+
+    float *out1 = get_q(sx1, sy1);
 		
 }
 
@@ -145,6 +147,30 @@ sq *get_last(){
 	while(p -> nexploration_ratet != NULL) p = p -> nexploration_ratet; //proceed till last nexploration_ratet
 	return p;
 }
+
+float *get_q(int sx, int sy){
+	float inputs[6];
+	inputs[0] = sqrt((sx - food_x) * (sx - food_x) + (sy - food_y) * (sy - food_y)); // Root (x)^2 + (y)^2
+	inputs[1] = check(sx	, sy	); //Check no increment
+	inputs[2] = check(sx + 1, sy	); //Check x increment
+	inputs[3] = check(sx    , sy + 1); //Check y increment
+	inputs[4] = check(sx - 1, sy); //Check x decrement
+	inputs[5] = check(sx    , sy - 1); //Check y decrement
+	//return net -> feed(inputs); //Send Feed inputs
+}
+
+float check(int x, int y){
+	sq *p = snake;
+	while(p != NULL){
+		if(p -> x == x && p -> y == y) //Check for each case until p's x,y is equal to x,y
+			return -1.0;	
+		p = p -> nexploration_ratet;
+	}
+	if(x > 18 || x < -18 || y > 18 || y < -18) return -1.0; //Border Case Decrement
+	return 1.0;
+}
+
+
 
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
