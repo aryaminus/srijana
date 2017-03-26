@@ -33,7 +33,8 @@ class neural{
         neural();
         neural(int in, int out, int num, int hn, float lrate);
         void init();
-        void put_weights(float *weights); 
+        void put_weights(float *weights);
+        float* feed(float *inputs); 
 };
 
 neural :: neural(){
@@ -123,4 +124,30 @@ void neural :: put_weights(float *weights){
 			}
 		}
 	}
+}
+
+float* neural :: feed(float *inputs){
+	int n = 0;
+	float *outputs;
+	for(int i = 0; i < num_layers; i++){
+		outputs = (float *)malloc(sizeof(float) * layers[i].num_nodes + 1); //Set Memory Allocation to num_nodes
+		for(int j = 0; j < layers[i].num_nodes; j++){
+			float sum = 0.0;
+			if(i == 0){
+				(layers[i].chr[j]).inputs[0] = inputs[j]; //set lay_i.chr_j.inp[0] layer to input{j}
+				sum = (layers[i].chr[j]).weights[0] * inputs[j]; //Set sum to weight(0) * input(j)
+			}else{
+				//fo other layers
+				for(int k = 0; k < (layers[i].chr[j]).num_inputs; k++){
+					(layers[i].chr[j]).inputs[k] = inputs[k]; //set input(k)
+					sum += (layers[i].chr[j]).weights[k] * inputs[k]; //increment sum to sum + weight(k) * input(k)
+				}
+			}
+			outputs[j] = sum; //Set output to sum
+			(layers[i].chr[j]).output = outputs[j]; //Set layer output to output(j)
+		}
+		outputs[layers[i].num_nodes] = -1.0; //Set output(num_nodes layer(i)) to -1.0
+		inputs = outputs; //set input to output for next layer
+	}
+	return outputs;
 }
