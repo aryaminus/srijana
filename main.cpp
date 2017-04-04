@@ -125,7 +125,7 @@ void itera(){
 float max_q(int sx, int sy, int food_x, int food_y){
 	
 	float new_q = 0.0;
-	int sx1 = sx + 1; // increment in x-axis
+	int sx1 = sx + 1; // increment in x-side
 	int sy1 = sy;
 	if(check_body(sx1, sy1)){
 		sq *last = get_last();
@@ -134,7 +134,37 @@ float max_q(int sx, int sy, int food_x, int food_y){
 	}
 
     float *out1 = get_q(sx1, sy1);
-		
+
+    sx1 = sx - 1; //decrement x-side
+	sy1 = sy;
+ 	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx;
+		sy1 = last -> y - last -> my;
+	}		
+			
+	float *out2 = get_q(sx1, sy1);
+
+ 	sx1 = sx;
+	sy1 = sy + 1; //increment y-side
+	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx;
+		sy1 = last -> y - last -> my;
+	}		
+	
+	float *out3 = get_q(sx1, sy1);
+
+	sx1 = sx;
+	sy1 = sy - 1; //decrement y-side
+	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx;
+		sy1 = last -> y - last -> my;
+	}		
+			
+	float *out4 = get_q(sx1, sy1);
+
 }
 
 bool check_body(int x, int y){
@@ -156,7 +186,7 @@ float *get_q(int sx, int sy){
 	inputs[3] = check(sx    , sy + 1); //Check y increment
 	inputs[4] = check(sx - 1, sy); //Check x decrement
 	inputs[5] = check(sx    , sy - 1); //Check y decrement
-	//return net -> feed(inputs); //Send Feed inputs
+	return net -> feed(inputs); //Send Feed inputs
 }
 
 float check(int x, int y){
