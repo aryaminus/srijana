@@ -165,6 +165,87 @@ float max_q(int sx, int sy, int food_x, int food_y){
 			
 	float *out4 = get_q(sx1, sy1);
 
+    if(out1[0] > out2[0]){
+		if(out1[0] > out3[0]){
+			if(out1[0] > out4[0]){
+				new_q = out1[0];
+				if(mx == -1) rev();
+				else{
+					mx =  1;
+					my =  0;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}	
+		}else{
+			if(out3[0] > out4[0]){
+				new_q = out3[0];
+				if(my == -1) rev();
+				else{
+					mx =  0;
+					my =  1;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}
+		}
+        /*
+        if 1>2,
+            1>3,
+                1>4 set new_q to out1
+                    if mx=-1 rev()
+                    else mx=1,my=0
+                else set new_q to out4 and others
+            else if 3>4 set new_q to out3 and others
+            else set new_q to out4 and others
+        */
+	}else{
+		if(out2[0] > out3[0]){
+			if(out2[0] > out4[0]){
+				new_q = out2[0];
+				if(mx == 1) rev();
+				else{
+					mx = -1;
+					my =  0;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}	
+		}else{
+			if(out3[0] > out4[0]){
+				new_q = out3[0];
+				if(my == -1) rev();
+				else{
+					mx =  0;
+					my =  1;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}
+		}
+	}
+	return new_q;
+
 }
 
 bool check_body(int x, int y){
@@ -200,7 +281,25 @@ float check(int x, int y){
 	return 1.0;
 }
 
-
+void rev(){
+	sq *snake2 = NULL;
+	sq *p = snake;
+	while(p != NULL){
+		sq *tmp = (sq *)malloc(sizeof(sq));
+		tmp -> x = p -> x;
+		tmp -> y = p -> y;
+		tmp -> mx = -1 * p -> mx; //reverse case of mx by multiplying -1
+		tmp -> my = -1 * p -> my; //reverse case of mx by multiplying -1
+		tmp -> nexploration_ratet = snake2; //nexploration_ratet to snake2
+		snake2 = tmp;
+		sq *x = p -> nexploration_ratet;
+		free(p); //Memory Unallocate of P
+		p = x; //put p=x
+	}
+	snake = snake2;
+	mx = snake -> mx;
+	my = snake -> my;
+}
 
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
