@@ -119,7 +119,67 @@ void itera(){
 	float new_q;
 	if(rand() % 100 > exploration_rate){
 		new_q = max_q(sx, sy, food_x, food_y);
+	}else{
+		int a = rand() % 4;
+        // same as in max_q
+		if(a == 0){
+			sx1 = sx + 1;
+			sy1 = sy;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}	
+			if(mx == -1) rev();
+			else{
+				mx =  1;
+				my =  0;
+			}
+		}else if(a == 1){
+			sx1 = sx - 1;
+			sy1 = sy;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(mx == 1) rev();
+			else{
+				mx = -1;
+				my =  0;
+			}
+		}else if(a == 2){
+			sx1 = sx;
+			sy1 = sy + 1;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(my == -1) rev();
+			else{
+				mx =  0;
+				my =  1;
+			}
+		}else{
+			sx1 = sx;
+			sy1 = sy - 1;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(my == 1) rev();
+			else{
+				mx =  0;
+				my = -1;
+			}
+		}
+		
+		float *out1 = get_q(sx1, sy1);
+		new_q = out1[0];
 	}
+	get_q(sx1, sy1);     
 }
 
 float max_q(int sx, int sy, int food_x, int food_y){
