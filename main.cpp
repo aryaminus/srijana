@@ -179,7 +179,8 @@ void itera(){
 		float *out1 = get_q(sx1, sy1);
 		new_q = out1[0];
 	}
-	get_q(sx1, sy1);     
+	get_q(sx1, sy1);
+    move();     
 }
 
 float max_q(int sx, int sy, int food_x, int food_y){
@@ -359,6 +360,39 @@ void rev(){
 	snake = snake2;
 	mx = snake -> mx;
 	my = snake -> my;
+}
+
+void move(){
+	sq *p = snake;
+	int x = p -> x;
+	int y = p -> y;
+	int tmx = p -> mx;
+	int tmy = p -> my;
+	while(p -> nexploration_ratet != NULL){
+		sq *q = p -> nexploration_ratet;
+		int tmp = q -> x;
+		q -> x = x;
+		x = tmp;
+
+		tmp = q -> y;
+		q -> y = y;
+		y = tmp;
+
+		tmp = q -> mx;
+		q -> mx = tmx;
+		tmx = tmp;
+
+		tmp = q -> my;
+		q -> my = tmy;
+		tmy = tmp;
+
+		p = p -> nexploration_ratet;
+	}
+	snake -> mx = mx;
+	snake -> my = my;
+	snake -> x += mx;
+	snake -> y += my;
+    // Setup increment case from x to mx within nexploration_ratet
 }
 
 int main(int argc, char** argv){
