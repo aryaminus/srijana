@@ -41,6 +41,8 @@ int tmp          =     50;
 
 int	  exploration_rate  = 	     40;
 
+int   fail_count =      0;
+
 void start(){
 	snake = NULL;
     add(0, 0);
@@ -180,7 +182,12 @@ void itera(){
 		new_q = out1[0];
 	}
 	get_q(sx1, sy1);
-    move();     
+    move();
+
+    sx1 = snake -> x;
+	sy1 = snake -> y;
+	
+	float re = reward(sx, sy, sx1, sy1);     
 }
 
 float max_q(int sx, int sy, int food_x, int food_y){
@@ -393,6 +400,45 @@ void move(){
 	snake -> x += mx;
 	snake -> y += my;
     // Setup increment case from x to mx within nexploration_ratet
+}
+
+float reward(int sx, int sy, int sx1, int sy1){
+	if(snake -> x == food_x && snake -> y == food_y){
+		add(food_x, food_y);//Show food
+		fail_count = 0;	
+		sc++; //Increment sc by 1
+		exploration_rate = exploration_rate / 3; //Rate decrement by 1/3 from 40%
+		set_f();
+		return 1000.0;
+	}else if(tail()){
+		fail_count = 0;	
+		sc = 0;
+		start(); //restart
+		fail_count++;
+		return -100000.0;
+	}else if(snake -> x > 18 || snake -> x < -18 || snake -> y > 18 || snake -> y < -18){
+		//border hit
+        start();
+		fail_count++;
+		return -1000.0;
+	}
+	if(fail_count > 50){
+        //decrease exploration_rate for hish fail_count
+		exploration_rate = 20;
+	}
+	float re2 = sqrt((sx1 - food_x) * (sx1 - food_x) + (sy1 - food_y) * (sy1 - food_y)); //Root. (x)^2 + (y)^2
+	return -re2;
+}
+
+bool tail(){
+	sq *p = snake;
+    //tail is touched by head
+	while(p -> nexploration_ratet != NULL){
+		if(p -> nexploration_ratet -> x == snake -> x && p -> nexploration_ratet -> y == snake -> y)
+			return true;	
+		p = p -> nexploration_ratet;
+	}
+	return false;
 }
 
 int main(int argc, char** argv){
