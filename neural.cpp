@@ -34,7 +34,9 @@ class neural{
         neural(int in, int out, int num, int hn, float lrate);
         void init();
         void put_weights(float *weights);
-        float* feed(float *inputs); 
+        float* feed(float *inputs);
+		void learn(float *dout);
+		float get_weighted_error(int l, int in);
 };
 
 neural :: neural(){
@@ -150,4 +152,40 @@ float* neural :: feed(float *inputs){
 		inputs = outputs; //set input to output for next layer
 	}
 	return outputs;
+}
+
+void neural :: learn(float *dout){
+	int tmp = num_layers - 1;
+	for(int j = 0; j < layers[tmp].num_nodes; j++){
+		
+		for(int k = 0; k < (layers[tmp].chr[j]).num_inputs; k++){
+			(layers[tmp].chr[j]).errors[k] = dout[0];
+			(layers[tmp].chr[j]).weights[k] += 
+					leaning_rate * (layers[tmp].chr[j]).inputs[k] *
+					(layers[tmp].chr[j]).errors[k];
+		}
+	}
+	
+	for(int i = num_layers - 2; i >= 0; i--){
+		for(int j = 0; j < layers[i].num_nodes ; j++){
+			
+			float sum = get_weighted_error(i + 1, j); 
+			for(int k = 0; k < (layers[i].chr[j]).num_inputs; k++){
+				
+				(layers[i].chr[j]).errors[k] = sum;		
+				(layers[i].chr[j]).weights[k] +=
+					leaning_rate * (layers[i].chr[j]).inputs[k] * (layers[i].chr[j]).errors[k];
+			}
+		}
+	}
+}
+
+float neural :: get_weighted_error(int l, int in){
+	float sum = 0.0;
+	for(int j = 0; j < layers[l].num_nodes; j++){
+		float error  = (layers[l].chr[j]).errors[in];
+		float weight = (layers[l].chr[j]).weights[in];
+		sum += error * weight; 
+	}
+	return sum;
 }

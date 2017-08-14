@@ -43,6 +43,8 @@ int	  exploration_rate  = 	     40;
 
 int   fail_count =      0;
 
+float old_q      =    0.0;
+
 void start(){
 	snake = NULL;
     add(0, 0);
@@ -188,6 +190,11 @@ void itera(){
 	sy1 = snake -> y;
 	
 	float re = reward(sx, sy, sx1, sy1);     
+
+    float dout[1];
+	dout[0] =  re + 0.9 * new_q - old_q;
+	net -> learn(dout);
+	old_q = new_q;
 }
 
 float max_q(int sx, int sy, int food_x, int food_y){
