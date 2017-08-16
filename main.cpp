@@ -189,9 +189,9 @@ void itera(){
     sx1 = snake -> x;
 	sy1 = snake -> y;
 	
+    float dout[1];
 	float re = reward(sx, sy, sx1, sy1);     
 
-    float dout[1];
 	dout[0] =  re + 0.9 * new_q - old_q;
 	net -> learn(dout);
 	old_q = new_q;
@@ -448,6 +448,35 @@ bool tail(){
 	return false;
 }
 
+void Reshape(int w, int h)
+{
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION); 
+	glLoadIdentity();
+	gluPerspective(45.0, (float)w/(float)h, 0.1, 200.0);
+	
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+	if((char)key == 'p'){
+		if(pus) pus = false;
+		else pus = true;	
+	}else if((char)key == 't'){
+		tmp--;
+	}else if((char)key == 'y'){
+		if(tmp < 0) tmp = 0;
+		tmp++;
+	}else if((char)key == 's'){
+		set_f();
+	}else if((char)key == 'q'){
+		cout << "-- SKIPING 500 STEPS --" << endl;
+		pus = true;
+		for(int i = 0; i < 500; i++) itera();
+		pus = false;
+	}
+}
+
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
 	cout << endl;
@@ -476,7 +505,9 @@ int main(int argc, char** argv){
     init(); //GL Setup
 
     glutTimerFunc(400, myIdleFunc, 0); //Timer setup
+	glutReshapeFunc(Reshape);
+    glutKeyboardFunc( keyboard );
 
-
+	return 0;
 
 }
