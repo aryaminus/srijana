@@ -477,6 +477,40 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }
 
+void display(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity ();
+
+	glTranslatef(0.0, 0.0, -22.0);
+	int i;
+	sq *p = snake;
+	par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
+	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
+	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
+	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
+	while(p != NULL){
+		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0);
+		p = p -> nexploration_ratet;	
+	}
+	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0);
+	glutSwapBuffers();
+}
+
+void par(float x1, float x2, float y1, float y2, float z1, float z2){
+	glColor3f(1.0, 0.0, 1.0);
+
+	glBegin(GL_QUADS);
+	
+	glVertex3f(x1, y1, z1);
+	glVertex3f(x2, y1, z1);
+	glVertex3f(x2, y2, z1);
+	glVertex3f(x1, y2, z1);
+
+	glEnd();
+}
+
 int main(int argc, char** argv){
     cout << "-----------------------------------------------" << endl;
 	cout << endl;
@@ -507,6 +541,7 @@ int main(int argc, char** argv){
     glutTimerFunc(400, myIdleFunc, 0); //Timer setup
 	glutReshapeFunc(Reshape);
     glutKeyboardFunc( keyboard );
+    glutDisplayFunc(display);
 
 	return 0;
 
