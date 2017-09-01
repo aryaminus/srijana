@@ -37,6 +37,7 @@ class neural{
         float* feed(float *inputs);
 		void learn(float *dout);
 		float get_weighted_error(int l, int in);
+		~neural();
 };
 
 neural :: neural(){
@@ -188,4 +189,16 @@ float neural :: get_weighted_error(int l, int in){
 		sum += error * weight; 
 	}
 	return sum;
+}
+
+neural :: ~neural(){
+	for(int i = 0; i < num_layers; i++){
+		for(int j = 0; j < layers[i].num_nodes; j++){
+			delete[] (layers[i].chr[j]).weights;
+			delete[] (layers[i].chr[j]).inputs;
+			delete[] (layers[i].chr[j]).errors;
+		}
+		delete[] layers[i].chr;
+	}
+	delete[] layers;
 }
