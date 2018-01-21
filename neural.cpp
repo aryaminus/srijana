@@ -74,7 +74,23 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
 			for(int e = 0; e < nd + 1; e++) (layers[i].chr[j]).errors[e] = 0.0;
 		}
 	}
+
 	int nd = layers[num - 2].num_nodes; //set nd to num_nodes of lay_num-2
 	layers[num - 1].num_nodes = out; //set num_nodes of lay_num-1 to out
 	layers[num - 1].chr = (node *)malloc(sizeof(node) * out); // set char of lay_num-1 for memory allocation to out
+
+    for(int i = 0; i < out; i++){
+		(layers[num - 1].chr[i]).num_inputs = nd + 1; //set num_inputs of chr_i of lay_num-1 to nd+1
+		num_weights += nd + 1; //increment of num_weights to nd +1
+		(layers[num - 1].chr[i]).weights = (float *)malloc(sizeof(float) * (nd + 1));
+		(layers[num - 1].chr[i]).inputs = (float *)malloc(sizeof(float) * (nd + 1));
+		(layers[num - 1].chr[i]).errors = (float *)malloc(sizeof(float) * (nd + 1));
+        /*
+            Memory Allocation of weights,inputs and errors of chr_i of lay_num-1 to nd + 1 
+        */
+		for(int e = 0; e < nd + 1; e++) (layers[num - 1].chr[i]).errors[e] = 0.0; //Set error to 0.0 of chr_i of lay_num-1
+	}
+
+    weights = (float *)malloc(sizeof(float) * num_weights); //Memory Allocation of weights to num_weights
+
 }
