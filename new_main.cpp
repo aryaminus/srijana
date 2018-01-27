@@ -23,6 +23,7 @@ int hightScore;
 int d = 1;
 
 int dir;
+bool down=false;
 
 class Fruct
 {
@@ -487,6 +488,97 @@ void timer (int = 0)
     Tick();
 
     glutTimerFunc (80,timer,0);
+}
+
+void MyKeyboard( int key, int a, int b)
+{
+    switch (key) {
+        case 101:   // вверх
+            dir = 0;
+            break;
+        case 102:   // направо
+            dir = 2;
+            break;
+        case 100:   // налево
+            dir = 1;
+            break;
+        case 103:   // вниз
+            dir = 3;
+            break;
+        case 27:    // Escape
+            exit(0);
+            break;
+    }
+}
+
+void fjfjfh()
+{
+    for(int i = 0; i < 2; i++)
+        m[i].New();
+    for(int i = 0; i < 10; i++)
+        u[i].New();
+
+    s[0].x = 25;
+    s[0].y = 15;
+}
+
+void MousePressed(int button, int state, int ax, int ay)
+{
+    down= button==GLUT_LEFT_BUTTON && state==GLUT_LEFT;
+    if(down)
+    {
+        if (key1==3)
+        {
+            if(ax > (540.0) && ax < (670.0) && ay > (490.0) && ay < (600.0) )
+            {
+                exit(0);
+            }
+            if(ax > (500.0) && ax < (705.0) && ay > (230.0) && ay < (330.0) )
+            {
+                d = 1;
+                glClear(GL_COLOR_BUFFER_BIT);
+                fjfjfh();
+                key1=4;
+                display();
+            }
+            if(ax > (500.0) && ax < (705.0) && ay > (100.0) && ay < (190.0) )
+            {
+                key1 = 1;
+                d = 2;
+                num = 5;
+                Score = 0;
+                fjfjfh();
+                display();
+            }
+        }
+        if (key1==2)
+        {
+            if(ax > (580.0) && ax < (670.0) && ay > (660.0) && ay < (690.0) )
+            {
+                exit(0);
+            }
+            if(ax > (540.0) && ax < (670.0) && ay > (580.0) && ay < (610.0) )
+            {
+                key1=3;
+                d = 1;
+                glClear(GL_COLOR_BUFFER_BIT);
+                fjfjfh();
+                DrawMenu();
+            }
+        }
+        if (key1==4)
+        {
+            if(ax > (520.0) && ax < (680.0) && ay > (580.0) && ay < (610.0) )
+            {
+                key1=3;
+                d = 1;
+                glClear(GL_COLOR_BUFFER_BIT);
+                fjfjfh();
+                DrawMenu();
+            }
+        }
+    }
+    glutMouseFunc(MousePressed);
 }
 
 int main (int argc,char **argv)
