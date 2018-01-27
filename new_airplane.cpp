@@ -840,6 +840,22 @@ void mouse(int button, int state, int x, int y)            // takes input from m
 	}
 }
 
+void keyPressed(unsigned char key,int x, int y) // int x and y are mouse pos at time of press
+{
+	if(key == 27)
+	{
+		exit(0);
+	}
+	else if(key == 'p' || key == 'P')
+	{
+		if(pause == true)
+			pause = false;
+		else
+			pause = true;
+	}
+	glutPostRedisplay();
+}
+
 int main(int argc, char** argv)
 {
 
@@ -852,6 +868,7 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutReshapeFunc(myReshape);
     glutMouseFunc(mouse);
+    glutKeyboardFunc(keyPressed);
 	return 0;
 
 }
