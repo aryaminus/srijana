@@ -12,6 +12,7 @@
 //#include <OpenGL/glu.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
+#include <GL/glu.h>
 
 using namespace std;
 
@@ -86,7 +87,7 @@ void DrawMenu()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBegin(GL_POLYGON); // Start
+    glBegin(GL_POLYGON); // User
     glColor3f (0.0, 0.26, 0.0);
     glVertex3f (705.0, 650.0, 0.0);
     glColor3f (0.0, 0.19, 0.0);
@@ -96,15 +97,15 @@ void DrawMenu()
     glColor3f (0.0, 0.19, 0.0);
     glVertex3f (705.0, 550.0, 0.0);
     glEnd();
-    glBegin(GL_POLYGON); // Rules
+    glBegin(GL_POLYGON); // Neural Network
     glColor3f (0.0, 0.26, 0.0);
-    glVertex3f (705.0, 510.0, 0.0);
+    glVertex3f (805.0, 510.0, 0.0);
     glColor3f (0.0, 0.19, 0.0);
     glVertex3f (500.0, 510.0, 0.0);
     glColor3f (0.0, 0.16, 0.0);
     glVertex3f (500.0, 410.0, 0.0);
     glColor3f (0.0, 0.19, 0.0);
-    glVertex3f (705.0, 410.0, 0.0);
+    glVertex3f (805.0, 410.0, 0.0);
     glEnd();
     glBegin(GL_POLYGON); // Exit
     glColor3f (0.0, 0.26, 0.0);
@@ -123,13 +124,13 @@ void DrawMenu()
     glPushMatrix();
     glTranslatef(w/(2.38), h/(1.3), 0);
     glScalef(0.4f, 0.4f, 0.4f);
-    draw_string(GLUT_STROKE_ROMAN, "START");
+    draw_string(GLUT_STROKE_ROMAN, "User");
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(w/(2.38), h/(1.7), 0);
+    glTranslatef(w/(3.38), h/(1.7), 0);
     glScalef(0.4f, 0.4f, 0.4f);
-    draw_string(GLUT_STROKE_ROMAN, "RULES");
+    draw_string(GLUT_STROKE_ROMAN, "Neural Network");
     glPopMatrix();
 
     glPushMatrix();
