@@ -5,7 +5,11 @@
 #include<stdio.h>
 #include<math.h>
 
-int SCREENH=600,SCREENW=800;
+int Scale = 25;
+
+int N = 50,M = 30;
+int w = Scale * N;
+int h = Scale * M;
 
 void init()
 {
@@ -23,14 +27,30 @@ void init()
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);
 }
 
+void CreateGlutWindow()
+{
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowPosition (50,50);
+    glutInitWindowSize (w,h);
+    glutCreateWindow ("Srijana");
+    glClearColor(0.0, 0.18, 0.0, 0);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D (0, w, 0, h);
+}
+
 int main (int argc,char **argv)
 {
     glutInit (&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize (SCREENW,SCREENH);
-    glutInitWindowPosition (50,50);
-    glutCreateWindow ("Srijana");
-    init();
+    CreateGlutWindow();
+    
+    glutDisplayFunc (display);
+    glutTimerFunc (80,timer,0);
+    glutSpecialFunc (MyKeyboard);
+    glutMouseFunc(MousePressed);
+
+    glutMainLoop(); 
 
     return 0;
 }
