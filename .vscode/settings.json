@@ -4,6 +4,7 @@
         "iostream": "cpp",
         "ratio": "cpp",
         "*.tcc": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "iosfwd": "cpp"
     }
 }
