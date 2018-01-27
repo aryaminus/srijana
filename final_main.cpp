@@ -8,9 +8,12 @@
  
 /* Handler for window-repaint event. Call back when the window first appears and
    whenever the window needs to be re-painted. */
-
-int refreshMills = 30;
-
+GLfloat xSpeed = 0.02f;      // Ball's speed in x and y directions
+GLfloat ySpeed = 0.007f;
+int refreshMills = 30;      // Refresh period in milliseconds
+bool paused = false;         // Movement paused or resumed
+GLfloat xSpeedSaved, ySpeedSaved;  // To support resume
+ 
 /* Initialize OpenGL Graphics */
 void initGL() {
    glClearColor(0.0, 0.0, 0.0, 1.0); // Set background (clear) color to black
@@ -59,6 +62,22 @@ void keyboard(unsigned char key, int x, int y) {
    }
 }
 
+/* Callback handler for mouse event */
+void mouse(int button, int state, int x, int y) {
+   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) { // Pause/resume
+      paused = !paused;         // Toggle state
+      if (paused) {
+         xSpeedSaved = xSpeed;  // Save parameters for restore later
+         ySpeedSaved = ySpeed;
+         xSpeed = 0;            // Stop movement
+         ySpeed = 0;
+      } else {
+         xSpeed = xSpeedSaved;  // Restore parameters
+         ySpeed = ySpeedSaved;
+      }
+   }
+}
+
 /* Main function: GLUT runs as a console application starting at main()  */
 int main(int argc, char** argv) {
    glutInit(&argc, argv);                 // Initialize GLUT
@@ -70,6 +89,7 @@ int main(int argc, char** argv) {
    glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
    glutTimerFunc(0, Timer, 0);     // First timer call immediately
    glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
+   glutMouseFunc(mouse);   // Register callback handler for mouse event
    initGL();
    glutMainLoop();           // Enter the event-processing loop
    return 0;
