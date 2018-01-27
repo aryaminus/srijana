@@ -1,9 +1,13 @@
-#include<stdlib.h>
+#include <iostream>
+#include <fstream>
+
+#include<time.h>
+#include "math.h"
+
 #include <GL/gl.h>
 #include <GL/glut.h>
-#include<time.h>
-#include<stdio.h>
-#include<math.h>
+
+using namespace std;
 
 int Scale = 25;
 
@@ -101,11 +105,11 @@ void DrawScore()
     draw_string(GLUT_STROKE_ROMAN, sScore);
     glPopMatrix();
 
-    //ifstream inFile("Snake.bin",ios_base::binary);
+    ifstream inFile("Snake.bin",ios_base::binary);
 
-    /*while(inFile.peek()!=EOF)
+    while(inFile.peek()!=EOF)
         inFile >> sHightScore;
-    inFile.close();*/
+    inFile.close();
 
     hightScore = atoi(sHightScore);
     glPushMatrix();
@@ -184,7 +188,7 @@ void DrawExit()
     draw_string(GLUT_STROKE_ROMAN, sScore);
     glPopMatrix();
 
-    /*
+    
     ifstream inFile("Snake.bin",ios_base::binary);
     while(inFile.peek()!=EOF) inFile >> sHightScore;
     inFile.close();
@@ -195,7 +199,7 @@ void DrawExit()
         ofstream outFile("Snake.bin",ios_base::binary);
         outFile << sScore;
         outFile.close();
-    }*/
+    }
 
     glPushMatrix();
     glTranslatef(w/(2.8), h/(2.55), 0);
@@ -383,21 +387,6 @@ void display()
     glFlush();
 }
 
-void init()
-{
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_COLOR_MATERIAL);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_NORMALIZE);
-	glShadeModel(GL_SMOOTH);
-	glLoadIdentity ();
-	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-
-	GLfloat acolor[] = {1.4, 1.4, 1.4, 1.0};
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);
-}
 
 void CreateGlutWindow()
 {
