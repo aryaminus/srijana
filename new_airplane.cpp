@@ -711,6 +711,17 @@ void display()
 	glutSwapBuffers();
 }
 
+void myReshape(int w, int h)
+{
+	SCREENH=h,SCREENW=w;
+	printf("width = %d\theight= %d",w,h);
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
+	glMatrixMode(GL_MODELVIEW);
+}
+
 int main(int argc, char** argv)
 {
 
@@ -721,6 +732,7 @@ int main(int argc, char** argv)
 	glutCreateWindow ("Airplane Escape!");
     init();
     glutDisplayFunc(display);
+    glutReshapeFunc(myReshape);
 	return 0;
 
 }
