@@ -13,7 +13,7 @@
 int SCREENH=600,SCREENW=800;
 int buildColor; 
 
-bool gameEndStatus=false,wflag = true,instflag=false,abtflag=false,pause=false,lflag = true;
+bool gameEndStatus=false,wflag = true,instflag=false,abtflag=false,pause=false,lflag = true,start=false;
 
 char score_Str[20],slevel[20];
 
@@ -722,6 +722,124 @@ void myReshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+void moveJetU()      // jet moving up
+{
+	if(start == false)
+		glutPostRedisplay();
+	else if(pause == false)
+	{
+		//alti_ang-=0.15;
+
+		plane_mvmt+=0.05;
+		glutPostRedisplay();
+	}
+}
+
+
+void moveJetD()          // jet moving down
+{
+	if(start == false)
+		glutPostRedisplay();
+	else if(pause == false )
+	{
+		//alti_ang+=0.15;
+		plane_mvmt-=0.05;
+		glutPostRedisplay();
+	}
+}
+
+void mouse(int button, int state, int x, int y)            // takes input from mouse
+{
+	int mx=x*100/SCREENW,my=(SCREENH-y)*100/SCREENH;		// m = mouse cordinate to graphics
+
+	/*		mouse calculation//converting to screen coordinates-ortho values
+
+	SCREENSIZE  ---->  ORTHO
+	x(reqd val) ---->  ???
+	*/
+	if(instflag || abtflag || gameEndStatus)
+	{
+		if(mx>40 && mx<60)
+		{
+			if(my>5 && my<10)
+			{
+				wflag = true;
+				if(instflag)
+					instflag = false;
+				else if (abtflag)
+					abtflag = false;
+				if(gameEndStatus)
+				{
+					wflag = true;
+					gameEndStatus = false;
+					plane_mvmt = 0;
+					start = false;
+					init();
+					bspd = BLOCKSPEED;//restarting the game
+					booster=BOOSTER_MAX;
+					score=1;
+					level=1;
+					glutPostRedisplay();
+				}
+
+			}
+		}
+	}
+	if(wflag == true)
+	{
+		if(mx>40 && mx<60)
+		{
+			if(my>40 && my<45)
+			{
+				start = true;
+				wflag=false;
+			}
+			else if(my>30 && my<35)
+			{
+				instflag = true;
+				wflag = false;
+			}
+			else if(my>20 && my<25)
+			{
+				abtflag = true;
+				wflag = false;
+			}
+			else if(my>10 && my<15)
+			{
+				exit(0);
+			}
+
+		}
+	}
+	else
+	{
+
+		if(button == GLUT_LEFT_BUTTON)
+		{
+			if (state == GLUT_DOWN )
+				glutIdleFunc(moveJetU);
+
+			else if (state == GLUT_UP )
+				glutIdleFunc(moveJetD);
+		}
+		if(button == GLUT_RIGHT_BUTTON)
+		{
+
+			if(state == GLUT_DOWN)
+			{
+				if(booster>0)
+				{
+					boost = 0.05;
+				}
+			}
+			if(state == GLUT_UP)
+			{
+				boost = 0;
+			}
+		}
+	}
+}
+
 int main(int argc, char** argv)
 {
 
@@ -733,6 +851,7 @@ int main(int argc, char** argv)
     init();
     glutDisplayFunc(display);
     glutReshapeFunc(myReshape);
+    glutMouseFunc(mouse);
 	return 0;
 
 }
