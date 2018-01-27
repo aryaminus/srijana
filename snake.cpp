@@ -101,9 +101,9 @@ void DrawMenu()
     glColor3f (0.0, 0.26, 0.0);
     glVertex3f (805.0, 510.0, 0.0);
     glColor3f (0.0, 0.19, 0.0);
-    glVertex3f (500.0, 510.0, 0.0);
+    glVertex3f (300.0, 510.0, 0.0);
     glColor3f (0.0, 0.16, 0.0);
-    glVertex3f (500.0, 410.0, 0.0);
+    glVertex3f (300.0, 410.0, 0.0);
     glColor3f (0.0, 0.19, 0.0);
     glVertex3f (805.0, 410.0, 0.0);
     glEnd();
