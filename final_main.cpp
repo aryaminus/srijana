@@ -6,12 +6,16 @@
 //http://www3.ntu.edu.sg/home/ehchua/programming/opengl/cg_introduction.html -> main reference
 
 //#include <windows.h>  // for MS Windows
+#include <iostream>
+#include <fstream>
 #include<stdlib.h>
+#include<stdio.h>
+
+#include "math.h"
+#include<time.h>
+
 #include <GL/gl.h>
 #include <GL/glut.h>  // GLUT, include glu.h and gl.h
-#include<time.h>
-#include<stdio.h>
-#include<math.h>
 
 /* Handler for window-repaint event. Call back when the window first appears and
    whenever the window needs to be re-painted. */
@@ -23,39 +27,72 @@ bool pause=false;        // Movement paused or resumed
 GLfloat xSpeedSaved, ySpeedSaved;  // To support resume
 */
 
-#define BLOCKSPEED 0.09
-
-#define BOOSTER_MAX 50
+using namespace std;
 
 int SCREENH=600,SCREENW=800;
 
-typedef struct building
-{
-	float block_x,block_y;
+int Scale = 25;
+int N = 50,M = 30;
+int w = Scale * N;
+int h = Scale * M;
 
-	bool state;
-	int no_floors;
-}building;
-
-typedef struct Cloud
-{
-	float block_x,block_y;
-	bool state;
-}Cloud;
+char sScore[15];
+char sHightScore[15];
+int Score = 0;
+int hightScore;
+int num = 7;
 
 //building b;  // building struct
 //int level=1,buildColor;  
 //Cloud s;     // cloud struct
 
-float bspd=BLOCKSPEED;  // block speed
 bool pause=false,wflag = true,instflag=false,uflag=false,nflag=false;  //flags
-float plane_mvmt=0.0;//jet movement up or down
-float score=1;
-char score_Str[20],slevel[20];   //score string and levelstring
-int level=1,buildColor;     // initial level=1
-building b;  // building struct
-Cloud s;     // cloud struct
-float booster=BOOSTER_MAX,boost=0;
+
+int key1 = 3;
+
+struct
+{
+    int x;
+    int y;
+} s[100];
+
+class Fruct
+{
+public:
+    int x,y;
+    void New()
+    {
+        x = rand() % N;
+        y = rand() % (M-3);
+    }
+    void DrawFruct()
+    {
+        glColor3f (1.0, 1.0, 0.0);
+        glRectf (x*Scale, y*Scale, (x+1)*Scale, (y+1)*Scale);
+    }
+}m[2];
+
+class Bomb
+{
+public:
+    int x,y;
+
+    void New()
+    {
+        x = rand() % N;
+        y = rand() % (M-3);
+    }
+    void DrawBomb()
+    {
+        glColor3f (1.0, 0.0, 0.0);
+        glBegin(GL_POLYGON);
+        for(float i=0; i < 2*3.14; i += 3.14/4)
+        {
+            glVertex2f((x+0.5)*Scale + (0.5)*Scale*(1.1)*sin(i), (y+0.5)*Scale + (0.5)*Scale*(1.1)*cos(i));
+        }
+        glEnd();
+    }
+}u[10];
 
 void keyPressed(unsigned char,int,int);
 void mouse(int button, int state, int x, int y);
@@ -72,6 +109,12 @@ void drawString(float x,float y,float z,void *font,char *string)
 	{
 		glutBitmapCharacter(font, *c);
 	}
+}
+
+void draw_string(void *font, const char* string)
+{
+    while(*string)
+        glutStrokeCharacter(font, *string++);
 }
 
 void welcome()
@@ -133,6 +176,184 @@ void welcome()
 
 }
 
+void DrawSnake()
+{
+    glColor3f (0.0,1.0,0.0);
+    for (int i = 0; i < num; i++)
+    {
+        glRectf (s[i].x*Scale, s[i].y*Scale, (s[i].x+1)*Scale, (s[i].y+1)*Scale);
+    }
+}
+
+void DrawScore()
+{
+    glLineWidth(1.5f);
+    glColor3f (1.1,1.0,1.0);
+
+    glPushMatrix();
+    glTranslatef(w/(5.4), h/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, "Your score:");
+    glPopMatrix();
+    sprintf(sScore, "%9d", Score);
+    glPushMatrix();
+    glTranslatef(w/(5), h/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, sScore);
+    glPopMatrix();
+
+    ifstream inFile("Snake.bin",ios_base::binary);
+    while(inFile.peek()!=EOF)
+        inFile >> sHightScore;
+    inFile.close();
+    hightScore = atoi(sHightScore);
+    glPushMatrix();
+    glTranslatef(w/(1.6), h/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, "Hide score:");
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(w/(1.2), h/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, sHightScore);
+    glPopMatrix();
+
+    glFinish();
+    glutSwapBuffers();
+}
+
+void DrawRules()
+{
+		glColor3f(0.3,0.56,0.84);   // background
+		glBegin(GL_POLYGON);
+		glVertex3f(0.0,0.0,0.0);
+		glColor3f(0.137,0.137,0.556);
+		glVertex3f(100.0,0.0,0.0);
+		glColor3f(0.196,0.196,0.8);
+		glVertex3f(100.0,100.0,0.0);
+		glVertex3f(0.0,100.0,0.0);
+		glEnd();
+		glPushMatrix();
+		glScalef(0.8,0.8,0);
+		glPopMatrix();
+		glColor3f(0.137,0.137,0.556);
+		glRectf(20.0,20.0,80.0,80.0);
+		glColor3f(0.8,0.8,0.8);
+		glRectf(21.0,21.0,79.0,79.0);
+
+
+		glColor3f(0.196,0.196,0.8);
+		glRectf(40,5,60,10);
+		glColor3f(0.8,0.8,0.8);
+		glRectf(40.5,5.5,59.5,9.5);
+
+		glColor3f(0.137,0.137,0.556);
+		drawString(46,6,0,GLUT_BITMAP_TIMES_ROMAN_24,"BACK");
+
+		glColor3f(0.137,0.137,0.556);
+		drawString(37,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY");
+		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Click and hold mouse left key to gain altitude of ");
+		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    the plane.");
+		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- Release the mouse left key to reduce the altitude.");
+		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Use the Right mouse key to speed up the plane(NOS)");
+		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- Main aim of the game is to avoid the obstacles ");
+		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"    such as buildings and clouds.");
+		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- Also the meter at the bottom shows the distance ");
+		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"    travelled,NITROS left,Atitude and the LEVEL.");
+		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As you reach distance multples of 50 tour level ");
+		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"    increases as well as the speed of the plane.");
+		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
+
+		glutPostRedisplay();
+}
+
+void DrawExit()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_POLYGON);
+    glColor3f (0.0, 0.16, 0.0);
+    glVertex3f (750.0, 150.0, 0.0);
+    glColor3f (0.0, 0.19, 0.0);
+    glVertex3f (500.0, 150.0, 0.0);
+    glColor3f (0.0, 0.16, 0.0);
+    glVertex3f (500.0, 90.0, 0.0);
+    glColor3f (0.0, 0.19, 0.0);
+    glVertex3f (750.0, 90.0, 0.0);
+    glEnd();
+    glBegin(GL_POLYGON);
+    glColor3f (0.0, 0.16, 0.0);
+    glVertex3f (670.0, 80.0, 0.0);
+    glColor3f (0.0, 0.19, 0.0);
+    glVertex3f (580.0, 80.0, 0.0);
+    glColor3f (0.0, 0.16, 0.0);
+    glVertex3f (580.0, 30.0, 0.0);
+    glColor3f (0.0, 0.19, 0.0);
+    glVertex3f (670.0, 30.0, 0.0);
+    glEnd();
+
+    glLineWidth(7.0f);
+    glColor3f (1.0,0.0,0.0);
+    glPushMatrix();
+    glTranslatef(w/(6), h/(1.5), 0);
+    glScalef(1.1f, 1.1f, 1.1f);
+    draw_string(GLUT_STROKE_ROMAN, "Game over!");
+    glPopMatrix();
+
+    glLineWidth(2.5f);
+    glColor3f (0.0,1.0,1.0);
+    glPushMatrix();
+    glTranslatef(w/(2.4), h/7, 0);
+    glScalef(0.2f, 0.2f, 0.2f);
+    draw_string(GLUT_STROKE_ROMAN, "Return to MENU");
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(w/(2.07), h/(15.3), 0);
+    glScalef(0.2f, 0.2f, 0.2f);
+    draw_string(GLUT_STROKE_ROMAN, "EXIT");
+    glPopMatrix();
+
+    glLineWidth(3.5f);
+    glColor3f (0.9,0.3,0.5);
+    glPushMatrix();
+    glTranslatef(w/(2.8), h/(2.1), 0);
+    glScalef(0.4f, 0.4f, 0.4f);
+    draw_string(GLUT_STROKE_ROMAN, "Final score:");
+    glPopMatrix();
+
+    sprintf(sScore, "%9d", Score);
+    glPushMatrix();
+    glTranslatef(w/(2.8), h/(2.1), 0);
+    glScalef(0.4f, 0.4f, 0.4f);
+    draw_string(GLUT_STROKE_ROMAN, sScore);
+    glPopMatrix();
+
+    ifstream inFile("Snake.bin",ios_base::binary);
+    while(inFile.peek()!=EOF) inFile >> sHightScore;
+    inFile.close();
+    hightScore = atoi(sHightScore);
+    if ( Score > hightScore )
+    {
+        sprintf(sHightScore, "%9d", Score);
+        ofstream outFile("Snake.bin",ios_base::binary);
+        outFile << sScore;
+        outFile.close();
+    }
+    glPushMatrix();
+    glTranslatef(w/(2.8), h/(2.55), 0);
+    glScalef(0.4f, 0.4f, 0.4f);
+    draw_string(GLUT_STROKE_ROMAN, "Hide score:");
+    glPopMatrix();
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(w/(1.6), h/(2.55), 0);
+    glScalef(0.4f, 0.4f, 0.4f);
+    draw_string(GLUT_STROKE_ROMAN, sHightScore);
+    glPopMatrix();
+
+    glFinish();
+    glutSwapBuffers();
+}
+
 /* Initialize OpenGL Graphics */
 void initGL() {
    glClearColor(0.0, 0.0, 0.0, 1.0); // Set background (clear) color to black
@@ -153,7 +374,41 @@ void display() {
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	switch (key1)
+    {
+        case 1:
+            glClear(GL_COLOR_BUFFER_BIT);
+            glBegin(GL_POLYGON);
+            glColor3f (0.0, 0.3, 0.0);
+            glVertex3f (0.0, 800.0, 0.0);
+            glColor3f (0.0, 0.11, 0.0);
+            glVertex3f (0, 700.0, 0.0);
+            glColor3f (0.0, 0.11, 0.0);
+            glVertex3f (1400.0, 700.0, 0.0);
+            glColor3f (0.0, 0.3, 0.0);
+            glVertex3f (1400.0, 800.0, 0.0);
+            glEnd();
+            for( int i = 0; i < 2; i++)
+                m[i].DrawFruct();
+            for( int i = 0; i < 10; i++)
+                u[i].DrawBomb();
+            DrawSnake();
+            DrawScore();
+            break;
+        case 2:
+            DrawExit();
+            break;
+        case 3:
+            welcome();
+            break;
+        case 4:
+            DrawRules();
+            break;
+    }
+    glFlush();
 	//GameOver Checking
+	/*
 	if(wflag==true)//Welcome Screen
 	{
 		welcome();
@@ -308,7 +563,7 @@ void display()
 		glutPostRedisplay();
 
 	}
-	glFlush();
+	glFlush();*/
 	glutSwapBuffers();
 }
 
