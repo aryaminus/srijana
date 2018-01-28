@@ -736,16 +736,76 @@ void mouse(int button, int state, int x, int y) {
       }
    }
 }*/
-void mouse(int button, int state, int x, int y)            // takes input from mouse
-{
-	int mx=x*100/SCREENW,my=(SCREENH-y)*100/SCREENH;		// m = mouse cordinate to graphics
-	down= button==GLUT_LEFT_BUTTON && state==GLUT_LEFT;
-	/*		mouse calculation//converting to screen coordinates-ortho values
 
+void fjfjfh()
+{
+    for(int i = 0; i < 2; i++)
+        m[i].New();
+    for(int i = 0; i < 10; i++)
+        u[i].New();
+
+    s[0].x = 25;
+    s[0].y = 15;
+}
+
+void mouse(int button, int state, int ax, int ay)            // takes input from mouse
+{
+	int mx=ax*100/SCREENW,my=(SCREENH-ay)*100/SCREENH;		// m = mouse cordinate to graphics
+	down= button==GLUT_LEFT_BUTTON && state==GLUT_LEFT;
+	if(down)
+    {
+        if (key1==3)
+        {
+            if(mx > (40) && mx < (60) && my > (10) && my < (15) )
+            {
+                exit(0);
+            }
+            if(mx > (40) && mx < (60) && my > (20) && my < (25) )
+            {
+                d = 1;
+                glClear(GL_COLOR_BUFFER_BIT);
+                fjfjfh();
+                key1=4;
+                display();
+            }
+            if(mx > (40) && mx < (60) && my > (40) && my < (45) )
+            {
+                key1 = 1;
+                d = 2;
+                num = 5;
+                Score = 0;
+                fjfjfh();
+                display();
+            }
+			if(mx > (40) && mx < (60) && my > (30) && my < (35) )
+            {
+                key1 = 2;
+                d = 2;
+                num = 5;
+                Score = 0;
+                fjfjfh();
+                display();
+            }
+        }
+        if (key1==4)
+        {
+            if(mx > (40) && mx < (60) && my > (5) && my < (10) )
+            {
+                key1=3;
+                d = 1;
+                glClear(GL_COLOR_BUFFER_BIT);
+                fjfjfh();
+                welcome();
+            }
+        }
+    }
+    glutMouseFunc(mouse);
+	/*		mouse calculation//converting to screen coordinates-ortho values
+	
 	SCREENSIZE  ---->  ORTHO
 	x(reqd val) ---->  ???
 	*/
-	if(instflag)
+	/*if(instflag)
 	{
 		if(mx>40 && mx<60)
 		{
@@ -782,7 +842,7 @@ void mouse(int button, int state, int x, int y)            // takes input from m
 			}
 
 		}
-	}
+	}*/
 }
 
 void timer (int = 0)
