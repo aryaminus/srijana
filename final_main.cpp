@@ -41,6 +41,9 @@ char sHightScore[15];
 int Score = 0;
 int hightScore;
 int num = 7;
+int d = 1;
+int dir;
+bool down=false;
 
 //building b;  // building struct
 //int level=1,buildColor;  
@@ -174,6 +177,81 @@ void welcome()
 	glPopMatrix();
 	glColor3f(0.137,0.137,0.556);
 
+}
+
+void Tick()
+{
+    //Движение тела змейки:
+    for (int i = num; i > 0; --i)
+    {
+        s[i].x = s[i-1].x;
+        s[i].y = s[i-1].y;
+    }
+
+    //Движение головы змейки:
+    switch (dir) {
+        case 0:
+            s[0].y+=1;
+            break;
+        case 1:
+            s[0].x-=1;
+            break;
+        case 2:
+            s[0].x+=1;
+            break;
+        case 3:
+            s[0].y-=1;
+            break;
+    }
+    int h=0;
+    // Если наехали на фрукт, змейка увеличивается:
+    for (int i = 0; i < 5; i++)
+        if ( (s[0].x == m[i].x) && (s[0].y == m[i].y) )
+        {
+            num++;
+            m[i].New();
+            if(h!=11){
+                u[h].New();
+                h++;
+            }
+            else{
+                h=0;
+                u[h].New();
+            }
+            Score+=2;
+        }
+
+    // Если наехали на бомбу, сокращается ее длина:
+    for (int i = 0; i < 10; i++)
+        if ( (s[0].x == u[i].x) && (s[0].y == u[i].y) )
+        {
+            if (num == 2) key1=2;
+            if (num > 3)
+                num = num - 2;
+            else
+                num = 2;
+            u[i].New();
+            if (Score > 0)
+                Score--;
+            if (Score <  0)
+                Score =0;
+        }
+
+    // Если вышли за границы, конец игры:
+    if (s[0].x > N || s[0].x < 0 || s[0].y > (M-3) || s[0].y < 0)
+    {
+        key1=2;
+    }
+
+    // Если змейка наехала сама на себя, сокращается ее длина:
+    for (int i = 1; i < num; i++)
+        if (s[0].x == s[i].x && s[0].y == s[i].y ){
+            num = 3;
+            if (Score > 0)
+                Score-=3;
+            if (Score < 0)
+                Score = 0;
+        }
 }
 
 void DrawSnake()
@@ -610,6 +688,7 @@ void myReshape(int w, int h)
 
 /* Callback handler for normal-key event */
 void keyboard(unsigned char key, int x, int y) {
+	/*
 	if(key == 27)
 	{
 		exit(0);
@@ -620,8 +699,25 @@ void keyboard(unsigned char key, int x, int y) {
 			pause = false;
 		else
 			pause = true;
-	}
-	glutPostRedisplay();
+	}*/
+	//glutPostRedisplay();
+	    switch (key) {
+        case 101:   // вверх
+            dir = 0;
+            break;
+        case 102:   // направо
+            dir = 2;
+            break;
+        case 100:   // налево
+            dir = 1;
+            break;
+        case 103:   // вниз
+            dir = 3;
+            break;
+        case 27:    // Escape
+            exit(0);
+            break;
+    }
 }
 
 /* Callback handler for mouse event */
@@ -643,7 +739,7 @@ void mouse(int button, int state, int x, int y) {
 void mouse(int button, int state, int x, int y)            // takes input from mouse
 {
 	int mx=x*100/SCREENW,my=(SCREENH-y)*100/SCREENH;		// m = mouse cordinate to graphics
-
+	down= button==GLUT_LEFT_BUTTON && state==GLUT_LEFT;
 	/*		mouse calculation//converting to screen coordinates-ortho values
 
 	SCREENSIZE  ---->  ORTHO
@@ -689,6 +785,16 @@ void mouse(int button, int state, int x, int y)            // takes input from m
 	}
 }
 
+void timer (int = 0)
+{
+    if (d==2){
+        display();
+    }
+    Tick();
+
+    glutTimerFunc (80,timer,0);
+}
+
 /* Main function: GLUT runs as a console application starting at main()  */
 int main(int argc, char** argv) {
    glutInit(&argc, argv);                 // Initialize GLUT
@@ -702,7 +808,7 @@ int main(int argc, char** argv) {
 
    glutDisplayFunc(display); // Register display callback handler for window re-paint
    glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
-   //glutTimerFunc(0, Timer, 0);     // First timer call immediately
+   glutTimerFunc (80,timer,0);     // First timer call immediately
 
    glutMouseFunc(mouse);   // Register callback handler for mouse event
    glutMainLoop();           // Enter the event-processing loop
