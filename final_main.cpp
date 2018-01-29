@@ -17,6 +17,8 @@
 #include <GL/gl.h>
 #include <GL/glut.h>  // GLUT, include glu.h and gl.h
 
+#include "neural.cpp"
+
 /* Handler for window-repaint event. Call back when the window first appears and
    whenever the window needs to be re-painted. */
 /*
@@ -28,6 +30,14 @@ GLfloat xSpeedSaved, ySpeedSaved;  // To support resume
 */
 
 using namespace std;
+
+neural *net;
+
+int num_layers   =      2;
+int num_inputs   =      6;
+int num_outputs  =      1;
+
+float learning_rate     = 0.0000001;
 
 int SCREENH=600,SCREENW=800;
 
@@ -857,21 +867,24 @@ void timer (int = 0)
 
 /* Main function: GLUT runs as a console application starting at main()  */
 int main(int argc, char** argv) {
-   glutInit(&argc, argv);                 // Initialize GLUT
+    srand(time(NULL));// Set random variable as current time
+    net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
 
-   glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); // Use RGBA color, enable double buffering and enable depth buffer
-   glutInitWindowSize (SCREENW,SCREENH);  // Set the window's initial width & height
-   glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
-   glutCreateWindow("Srijana: User and Neural Network game"); // Create a window with the given title
-   
-   initGL();
+    glutInit(&argc, argv);                 // Initialize GLUT
 
-   glutDisplayFunc(display); // Register display callback handler for window re-paint
-   glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
-   glutTimerFunc (80,timer,0);     // First timer call immediately
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); // Use RGBA color, enable double buffering and enable depth buffer
+    glutInitWindowSize (SCREENW,SCREENH);  // Set the window's initial width & height
+    glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+    glutCreateWindow("Srijana: User and Neural Network game"); // Create a window with the given title
 
-   glutMouseFunc(mouse);   // Register callback handler for mouse event
-   glutMainLoop();           // Enter the event-processing loop
-   glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
-   return 0;
+    initGL();
+
+    glutDisplayFunc(display); // Register display callback handler for window re-paint
+    glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
+    glutTimerFunc (80,timer,0);     // First timer call immediately
+
+    glutMouseFunc(mouse);   // Register callback handler for mouse event
+    glutMainLoop();           // Enter the event-processing loop
+    glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
+    return 0;
 }
