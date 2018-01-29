@@ -6,6 +6,8 @@
 //http://www3.ntu.edu.sg/home/ehchua/programming/opengl/cg_introduction.html -> main reference
 
 //#include <windows.h>  // for MS Windows
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include<stdlib.h>
@@ -16,6 +18,7 @@
 
 #include <GL/gl.h>
 #include <GL/glut.h>  // GLUT, include glu.h and gl.h
+#include <GL/glu.h>
 
 #include "neural.cpp"
 
@@ -31,6 +34,16 @@ GLfloat xSpeedSaved, ySpeedSaved;  // To support resume
 
 using namespace std;
 
+typedef struct sq{
+	int x;
+	int y;
+	int mx;
+	int my;
+	struct sq *nexploration_ratet;
+} sq;
+
+sq *snake = NULL;
+
 neural *net;
 
 int num_layers   =      2;
@@ -38,6 +51,25 @@ int num_inputs   =      6;
 int num_outputs  =      1;
 
 float learning_rate     = 0.0000001;
+
+bool  pus        =  false;
+
+int iterations   =      0;
+
+int	  exploration_rate  = 	     40;
+
+int food_x       =     -6;
+int food_y       =     -6;
+
+int mx;
+int my;
+
+int   fail_count =      0;
+int sc           =      0;
+
+float old_q      =    0.0;
+
+int tmp          =     50;
 
 int SCREENH=600,SCREENW=800;
 
@@ -63,55 +95,13 @@ bool pause=false,wflag = true,instflag=false,uflag=false,nflag=false;  //flags
 
 int key1 = 3;
 
-struct
-{
-    int x;
-    int y;
-} s[100];
-
-class Fruct
-{
-public:
-    int x,y;
-    void New()
-    {
-        x = rand() % N;
-        y = rand() % (M-3);
-    }
-    void DrawFruct()
-    {
-        glColor3f (1.0, 1.0, 0.0);
-        glRectf (x*Scale, y*Scale, (x+1)*Scale, (y+1)*Scale);
-    }
-}m[2];
-
-class Bomb
-{
-public:
-    int x,y;
-
-    void New()
-    {
-        x = rand() % N;
-        y = rand() % (M-3);
-    }
-    void DrawBomb()
-    {
-        glColor3f (1.0, 0.0, 0.0);
-        glBegin(GL_POLYGON);
-        for(float i=0; i < 2*3.14; i += 3.14/4)
-        {
-            glVertex2f((x+0.5)*Scale + (0.5)*Scale*(1.1)*sin(i), (y+0.5)*Scale + (0.5)*Scale*(1.1)*cos(i));
-        }
-        glEnd();
-    }
-}u[10];
-
+/*
 void keyPressed(unsigned char,int,int);
 void mouse(int button, int state, int x, int y);
 void printString(float x,float y,float z,void *font,char *string);//what does this do??
 void welcome();
 void display();
+*/
 
 void drawString(float x,float y,float z,void *font,char *string)
 {
@@ -189,127 +179,6 @@ void welcome()
 
 }
 
-void Tick()
-{
-    //Движение тела змейки:
-    for (int i = num; i > 0; --i)
-    {
-        s[i].x = s[i-1].x;
-        s[i].y = s[i-1].y;
-    }
-
-    //Движение головы змейки:
-    switch (dir) {
-        case 0:
-            s[0].y+=1;
-            break;
-        case 1:
-            s[0].x-=1;
-            break;
-        case 2:
-            s[0].x+=1;
-            break;
-        case 3:
-            s[0].y-=1;
-            break;
-    }
-    int h=0;
-    // Если наехали на фрукт, змейка увеличивается:
-    for (int i = 0; i < 5; i++)
-        if ( (s[0].x == m[i].x) && (s[0].y == m[i].y) )
-        {
-            num++;
-            m[i].New();
-            if(h!=11){
-                u[h].New();
-                h++;
-            }
-            else{
-                h=0;
-                u[h].New();
-            }
-            Score+=2;
-        }
-
-    // Если наехали на бомбу, сокращается ее длина:
-    for (int i = 0; i < 10; i++)
-        if ( (s[0].x == u[i].x) && (s[0].y == u[i].y) )
-        {
-            if (num == 2) key1=2;
-            if (num > 3)
-                num = num - 2;
-            else
-                num = 2;
-            u[i].New();
-            if (Score > 0)
-                Score--;
-            if (Score <  0)
-                Score =0;
-        }
-
-    // Если вышли за границы, конец игры:
-    if (s[0].x > N || s[0].x < 0 || s[0].y > (M-3) || s[0].y < 0)
-    {
-        key1=2;
-    }
-
-    // Если змейка наехала сама на себя, сокращается ее длина:
-    for (int i = 1; i < num; i++)
-        if (s[0].x == s[i].x && s[0].y == s[i].y ){
-            num = 3;
-            if (Score > 0)
-                Score-=3;
-            if (Score < 0)
-                Score = 0;
-        }
-}
-
-void DrawSnake()
-{
-    glColor3f (0.0,1.0,0.0);
-    for (int i = 0; i < num; i++)
-    {
-        glRectf (s[i].x*Scale, s[i].y*Scale, (s[i].x+1)*Scale, (s[i].y+1)*Scale);
-    }
-}
-
-void DrawScore()
-{
-    glLineWidth(1.5f);
-    glColor3f (1.1,1.0,1.0);
-
-    glPushMatrix();
-    glTranslatef(w/(5.4), h/(1.05), 0);
-    glScalef(0.3f, 0.3f, 0.3f);
-    draw_string(GLUT_STROKE_ROMAN, "Your score:");
-    glPopMatrix();
-    sprintf(sScore, "%9d", Score);
-    glPushMatrix();
-    glTranslatef(w/(5), h/(1.05), 0);
-    glScalef(0.3f, 0.3f, 0.3f);
-    draw_string(GLUT_STROKE_ROMAN, sScore);
-    glPopMatrix();
-
-    ifstream inFile("Snake.bin",ios_base::binary);
-    while(inFile.peek()!=EOF)
-        inFile >> sHightScore;
-    inFile.close();
-    hightScore = atoi(sHightScore);
-    glPushMatrix();
-    glTranslatef(w/(1.6), h/(1.05), 0);
-    glScalef(0.3f, 0.3f, 0.3f);
-    draw_string(GLUT_STROKE_ROMAN, "Hide score:");
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(w/(1.2), h/(1.05), 0);
-    glScalef(0.3f, 0.3f, 0.3f);
-    draw_string(GLUT_STROKE_ROMAN, sHightScore);
-    glPopMatrix();
-
-    glFinish();
-    glutSwapBuffers();
-}
-
 void DrawRules()
 {
 		glColor3f(0.3,0.56,0.84);   // background
@@ -355,93 +224,6 @@ void DrawRules()
 		glutPostRedisplay();
 }
 
-void DrawExit()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-    glBegin(GL_POLYGON);
-    glColor3f (0.0, 0.16, 0.0);
-    glVertex3f (750.0, 150.0, 0.0);
-    glColor3f (0.0, 0.19, 0.0);
-    glVertex3f (500.0, 150.0, 0.0);
-    glColor3f (0.0, 0.16, 0.0);
-    glVertex3f (500.0, 90.0, 0.0);
-    glColor3f (0.0, 0.19, 0.0);
-    glVertex3f (750.0, 90.0, 0.0);
-    glEnd();
-    glBegin(GL_POLYGON);
-    glColor3f (0.0, 0.16, 0.0);
-    glVertex3f (670.0, 80.0, 0.0);
-    glColor3f (0.0, 0.19, 0.0);
-    glVertex3f (580.0, 80.0, 0.0);
-    glColor3f (0.0, 0.16, 0.0);
-    glVertex3f (580.0, 30.0, 0.0);
-    glColor3f (0.0, 0.19, 0.0);
-    glVertex3f (670.0, 30.0, 0.0);
-    glEnd();
-
-    glLineWidth(7.0f);
-    glColor3f (1.0,0.0,0.0);
-    glPushMatrix();
-    glTranslatef(w/(6), h/(1.5), 0);
-    glScalef(1.1f, 1.1f, 1.1f);
-    draw_string(GLUT_STROKE_ROMAN, "Game over!");
-    glPopMatrix();
-
-    glLineWidth(2.5f);
-    glColor3f (0.0,1.0,1.0);
-    glPushMatrix();
-    glTranslatef(w/(2.4), h/7, 0);
-    glScalef(0.2f, 0.2f, 0.2f);
-    draw_string(GLUT_STROKE_ROMAN, "Return to MENU");
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(w/(2.07), h/(15.3), 0);
-    glScalef(0.2f, 0.2f, 0.2f);
-    draw_string(GLUT_STROKE_ROMAN, "EXIT");
-    glPopMatrix();
-
-    glLineWidth(3.5f);
-    glColor3f (0.9,0.3,0.5);
-    glPushMatrix();
-    glTranslatef(w/(2.8), h/(2.1), 0);
-    glScalef(0.4f, 0.4f, 0.4f);
-    draw_string(GLUT_STROKE_ROMAN, "Final score:");
-    glPopMatrix();
-
-    sprintf(sScore, "%9d", Score);
-    glPushMatrix();
-    glTranslatef(w/(2.8), h/(2.1), 0);
-    glScalef(0.4f, 0.4f, 0.4f);
-    draw_string(GLUT_STROKE_ROMAN, sScore);
-    glPopMatrix();
-
-    ifstream inFile("Snake.bin",ios_base::binary);
-    while(inFile.peek()!=EOF) inFile >> sHightScore;
-    inFile.close();
-    hightScore = atoi(sHightScore);
-    if ( Score > hightScore )
-    {
-        sprintf(sHightScore, "%9d", Score);
-        ofstream outFile("Snake.bin",ios_base::binary);
-        outFile << sScore;
-        outFile.close();
-    }
-    glPushMatrix();
-    glTranslatef(w/(2.8), h/(2.55), 0);
-    glScalef(0.4f, 0.4f, 0.4f);
-    draw_string(GLUT_STROKE_ROMAN, "Hide score:");
-    glPopMatrix();
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(w/(1.6), h/(2.55), 0);
-    glScalef(0.4f, 0.4f, 0.4f);
-    draw_string(GLUT_STROKE_ROMAN, sHightScore);
-    glPopMatrix();
-
-    glFinish();
-    glutSwapBuffers();
-}
-
 /* Initialize OpenGL Graphics */
 void initGL() {
    glClearColor(0.0, 0.0, 0.0, 1.0); // Set background (clear) color to black
@@ -459,6 +241,38 @@ void display() {
 }
 */
 
+void par(float x1, float x2, float y1, float y2, float z1, float z2){
+	glColor3f(1.0, 0.0, 1.0);
+
+	glBegin(GL_QUADS);
+
+	glVertex3f(x1, y1, z1);
+	glVertex3f(x2, y1, z1);
+	glVertex3f(x2, y2, z1);
+	glVertex3f(x1, y2, z1);
+
+	glEnd();
+}
+
+void DrawNeural(){
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity ();
+
+            glTranslatef(0.0, 0.0, -22.0);
+            int i;
+            sq *p = snake;
+            par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
+            par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
+            par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
+            par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
+            while(p != NULL){
+                par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0);
+                p = p -> nexploration_ratet;
+            }
+            par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0);
+}
+
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -466,26 +280,10 @@ void display()
 	switch (key1)
     {
         case 1:
-            glClear(GL_COLOR_BUFFER_BIT);
-            glBegin(GL_POLYGON);
-            glColor3f (0.0, 0.3, 0.0);
-            glVertex3f (0.0, 800.0, 0.0);
-            glColor3f (0.0, 0.11, 0.0);
-            glVertex3f (0, 700.0, 0.0);
-            glColor3f (0.0, 0.11, 0.0);
-            glVertex3f (1400.0, 700.0, 0.0);
-            glColor3f (0.0, 0.3, 0.0);
-            glVertex3f (1400.0, 800.0, 0.0);
-            glEnd();
-            for( int i = 0; i < 2; i++)
-                m[i].DrawFruct();
-            for( int i = 0; i < 10; i++)
-                u[i].DrawBomb();
-            DrawSnake();
-            DrawScore();
+            DrawNeural();
             break;
         case 2:
-            DrawExit();
+            DrawNeural();
             break;
         case 3:
             welcome();
@@ -495,164 +293,8 @@ void display()
             break;
     }
     glFlush();
-	//GameOver Checking
-	/*
-	if(wflag==true)//Welcome Screen
-	{
-		welcome();
-	}
-	else if(uflag==true)//User Screen
-	{
-		glColor3f(0.3,0.56,0.84);   // background
-		glBegin(GL_POLYGON);
-		glVertex3f(0.0,0.0,0.0);
-		glColor3f(0.137,0.137,0.556);
-		glVertex3f(100.0,0.0,0.0);
-		glColor3f(0.196,0.196,0.8);
-		glVertex3f(100.0,100.0,0.0);
-		glVertex3f(0.0,100.0,0.0);
-		glEnd();
-		glPushMatrix();
-		glScalef(0.8,0.8,0);
-		glPopMatrix();
-		glColor3f(0.137,0.137,0.556);
-		glRectf(20.0,20.0,80.0,80.0);
-		glColor3f(0.8,0.8,0.8);
-		glRectf(21.0,21.0,79.0,79.0);
-
-
-		glColor3f(0.196,0.196,0.8);
-		glRectf(40,5,60,10);
-		glColor3f(0.8,0.8,0.8);
-		glRectf(40.5,5.5,59.5,9.5);
-
-		glColor3f(0.137,0.137,0.556);
-		drawString(46,6,0,GLUT_BITMAP_TIMES_ROMAN_24,"BACK");
-
-		glColor3f(0.137,0.137,0.556);
-		drawString(37,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY");
-		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Click and hold mouse left key to gain altitude of ");
-		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    the plane.");
-		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- Release the mouse left key to reduce the altitude.");
-		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Use the Right mouse key to speed up the plane(NOS)");
-		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- Main aim of the game is to avoid the obstacles ");
-		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"    such as buildings and clouds.");
-		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- Also the meter at the bottom shows the distance ");
-		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"    travelled,NITROS left,Atitude and the LEVEL.");
-		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As you reach distance multples of 50 tour level ");
-		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"    increases as well as the speed of the plane.");
-		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
-
-		glutPostRedisplay();
-	}
-	else if(nflag==true)//Neural Network Screen
-	{
-		glColor3f(0.3,0.56,0.84);   // background
-		glBegin(GL_POLYGON);
-		glVertex3f(0.0,0.0,0.0);
-		glColor3f(0.137,0.137,0.556);
-		glVertex3f(100.0,0.0,0.0);
-		glColor3f(0.196,0.196,0.8);
-		glVertex3f(100.0,100.0,0.0);
-		glVertex3f(0.0,100.0,0.0);
-		glEnd();
-		glPushMatrix();
-		glScalef(0.8,0.8,0);
-		glPopMatrix();
-		glColor3f(0.137,0.137,0.556);
-		glRectf(20.0,20.0,80.0,80.0);
-		glColor3f(0.8,0.8,0.8);
-		glRectf(21.0,21.0,79.0,79.0);
-
-
-		glColor3f(0.196,0.196,0.8);
-		glRectf(40,5,60,10);
-		glColor3f(0.8,0.8,0.8);
-		glRectf(40.5,5.5,59.5,9.5);
-
-		glColor3f(0.137,0.137,0.556);
-		drawString(46,6,0,GLUT_BITMAP_TIMES_ROMAN_24,"BACK");
-
-		glColor3f(0.137,0.137,0.556);
-		drawString(37,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY");
-		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Click and hold mouse left key to gain altitude of ");
-		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    the plane.");
-		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- Release the mouse left key to reduce the altitude.");
-		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Use the Right mouse key to speed up the plane(NOS)");
-		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- Main aim of the game is to avoid the obstacles ");
-		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"    such as buildings and clouds.");
-		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- Also the meter at the bottom shows the distance ");
-		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"    travelled,NITROS left,Atitude and the LEVEL.");
-		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As you reach distance multples of 50 tour level ");
-		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"    increases as well as the speed of the plane.");
-		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
-
-		glutPostRedisplay();
-	}
-	else if (instflag == true)
-	{
-		glColor3f(0.3,0.56,0.84);   // background
-		glBegin(GL_POLYGON);
-		glVertex3f(0.0,0.0,0.0);
-		glColor3f(0.137,0.137,0.556);
-		glVertex3f(100.0,0.0,0.0);
-		glColor3f(0.196,0.196,0.8);
-		glVertex3f(100.0,100.0,0.0);
-		glVertex3f(0.0,100.0,0.0);
-		glEnd();
-		glPushMatrix();
-		glScalef(0.8,0.8,0);
-		glPopMatrix();
-		glColor3f(0.137,0.137,0.556);
-		glRectf(20.0,20.0,80.0,80.0);
-		glColor3f(0.8,0.8,0.8);
-		glRectf(21.0,21.0,79.0,79.0);
-
-
-		glColor3f(0.196,0.196,0.8);
-		glRectf(40,5,60,10);
-		glColor3f(0.8,0.8,0.8);
-		glRectf(40.5,5.5,59.5,9.5);
-
-		glColor3f(0.137,0.137,0.556);
-		drawString(46,6,0,GLUT_BITMAP_TIMES_ROMAN_24,"BACK");
-
-		glColor3f(0.137,0.137,0.556);
-		drawString(37,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY");
-		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Click and hold mouse left key to gain altitude of ");
-		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    the plane.");
-		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- Release the mouse left key to reduce the altitude.");
-		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Use the Right mouse key to speed up the plane(NOS)");
-		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- Main aim of the game is to avoid the obstacles ");
-		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"    such as buildings and clouds.");
-		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- Also the meter at the bottom shows the distance ");
-		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"    travelled,NITROS left,Atitude and the LEVEL.");
-		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As you reach distance multples of 50 tour level ");
-		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"    increases as well as the speed of the plane.");
-		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
-
-		glutPostRedisplay();
-
-	}
-	else
-	{
-		glPushMatrix();
-		glScalef(0.8,0.8,0);
-		glPopMatrix();
-		glPushMatrix();
-		glColor3f(0.196,0.196,0.8);
-		glRectf(35.0,40.0,65.0,60.0);
-		glColor3f(0.8,0.8,0.8);
-		glRectf(36.0,41.0,64.0,59.0);
-		glPopMatrix();
-		glColor3f(0.137,0.137,0.556);
-	    drawString(40,55,0,GLUT_BITMAP_HELVETICA_18," GAME PAUSED");
-		drawString(37,45,0,GLUT_BITMAP_HELVETICA_18," PRESS 'P' to continue");
-		glutPostRedisplay();
-
-	}
-	glFlush();*/
 	glutSwapBuffers();
+    glFlush();
 }
 
 
@@ -747,16 +389,6 @@ void mouse(int button, int state, int x, int y) {
    }
 }*/
 
-void fjfjfh()
-{
-    for(int i = 0; i < 2; i++)
-        m[i].New();
-    for(int i = 0; i < 10; i++)
-        u[i].New();
-
-    s[0].x = 25;
-    s[0].y = 15;
-}
 
 void mouse(int button, int state, int ax, int ay)            // takes input from mouse
 {
@@ -774,9 +406,7 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             {
                 d = 1;
                 glClear(GL_COLOR_BUFFER_BIT);
-                fjfjfh();
                 key1=4;
-                display();
             }
             if(mx > (40) && mx < (60) && my > (40) && my < (45) )
             {
@@ -784,7 +414,6 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
                 d = 2;
                 num = 5;
                 Score = 0;
-                fjfjfh();
                 display();
             }
 			if(mx > (40) && mx < (60) && my > (30) && my < (35) )
@@ -793,7 +422,6 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
                 d = 2;
                 num = 5;
                 Score = 0;
-                fjfjfh();
                 display();
             }
         }
@@ -804,7 +432,6 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
                 key1=3;
                 d = 1;
                 glClear(GL_COLOR_BUFFER_BIT);
-                fjfjfh();
                 welcome();
             }
         }
@@ -855,14 +482,398 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
 	}*/
 }
 
+bool check_body(int x, int y){
+	if(x == snake -> nexploration_ratet -> x && y == snake -> nexploration_ratet -> y) return true; //nexploration_ratet x,y is same as x,y
+	return false;
+}
+
+sq *get_last(){
+	sq *p = snake;
+	while(p -> nexploration_ratet != NULL) p = p -> nexploration_ratet; //proceed till last nexploration_ratet
+	return p;
+}
+
+float check(int x, int y){
+	sq *p = snake;
+	while(p != NULL){
+		if(p -> x == x && p -> y == y) //Check for each case until p's x,y is equal to x,y
+			return -1.0;
+		p = p -> nexploration_ratet;
+	}
+	if(x > 18 || x < -18 || y > 18 || y < -18) return -1.0; //Border Case Decrement
+	return 1.0;
+}
+
+float *get_q(int sx, int sy){
+	float inputs[6];
+	inputs[0] = sqrt((sx - food_x) * (sx - food_x) + (sy - food_y) * (sy - food_y)); // Root (x)^2 + (y)^2
+	inputs[1] = check(sx	, sy	); //Check no increment
+	inputs[2] = check(sx + 1, sy	); //Check x increment
+	inputs[3] = check(sx    , sy + 1); //Check y increment
+	inputs[4] = check(sx - 1, sy); //Check x decrement
+	inputs[5] = check(sx    , sy - 1); //Check y decrement
+	return net -> feed(inputs); //Send Feed inputs
+}
+
+void rev(){
+	sq *snake2 = NULL;
+	sq *p = snake;
+	while(p != NULL){
+		sq *tmp = (sq *)malloc(sizeof(sq));
+		tmp -> x = p -> x;
+		tmp -> y = p -> y;
+		tmp -> mx = -1 * p -> mx; //reverse case of mx by multiplying -1
+		tmp -> my = -1 * p -> my; //reverse case of mx by multiplying -1
+		tmp -> nexploration_ratet = snake2; //nexploration_ratet to snake2
+		snake2 = tmp;
+		sq *x = p -> nexploration_ratet;
+		free(p); //Memory Unallocate of P
+		p = x; //put p=x
+	}
+	snake = snake2;
+	mx = snake -> mx;
+	my = snake -> my;
+}
+
+float max_q(int sx, int sy, int food_x, int food_y){
+
+	float new_q = 0.0;
+	int sx1 = sx + 1; // increment in x-side
+	int sy1 = sy;
+	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx; //decrement mx with x of last
+		sy1 = last -> y - last -> my; //decrement my with y of last
+	}
+
+    float *out1 = get_q(sx1, sy1);
+
+    sx1 = sx - 1; //decrement x-side
+	sy1 = sy;
+ 	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx;
+		sy1 = last -> y - last -> my;
+	}
+
+	float *out2 = get_q(sx1, sy1);
+
+ 	sx1 = sx;
+	sy1 = sy + 1; //increment y-side
+	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx;
+		sy1 = last -> y - last -> my;
+	}
+
+	float *out3 = get_q(sx1, sy1);
+
+	sx1 = sx;
+	sy1 = sy - 1; //decrement y-side
+	if(check_body(sx1, sy1)){
+		sq *last = get_last();
+		sx1 = last -> x - last -> mx;
+		sy1 = last -> y - last -> my;
+	}
+
+	float *out4 = get_q(sx1, sy1);
+
+    if(out1[0] > out2[0]){
+		if(out1[0] > out3[0]){
+			if(out1[0] > out4[0]){
+				new_q = out1[0];
+				if(mx == -1) rev();
+				else{
+					mx =  1;
+					my =  0;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}
+		}else{
+			if(out3[0] > out4[0]){
+				new_q = out3[0];
+				if(my == -1) rev();
+				else{
+					mx =  0;
+					my =  1;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}
+		}
+        /*
+        if 1>2,
+            1>3,
+                1>4 set new_q to out1
+                    if mx=-1 rev()
+                    else mx=1,my=0
+                else set new_q to out4 and others
+            else if 3>4 set new_q to out3 and others
+            else set new_q to out4 and others
+        */
+	}else{
+		if(out2[0] > out3[0]){
+			if(out2[0] > out4[0]){
+				new_q = out2[0];
+				if(mx == 1) rev();
+				else{
+					mx = -1;
+					my =  0;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}
+		}else{
+			if(out3[0] > out4[0]){
+				new_q = out3[0];
+				if(my == -1) rev();
+				else{
+					mx =  0;
+					my =  1;
+				}
+			}else{
+				new_q = out4[0];
+				if(my == 1) rev();
+				else{
+					mx =  0;
+					my = -1;
+				}
+			}
+		}
+	}
+	return new_q;
+
+}
+
+void move(){
+	sq *p = snake;
+	int x = p -> x;
+	int y = p -> y;
+	int tmx = p -> mx;
+	int tmy = p -> my;
+	while(p -> nexploration_ratet != NULL){
+		sq *q = p -> nexploration_ratet;
+		int tmp = q -> x;
+		q -> x = x;
+		x = tmp;
+
+		tmp = q -> y;
+		q -> y = y;
+		y = tmp;
+
+		tmp = q -> mx;
+		q -> mx = tmx;
+		tmx = tmp;
+
+		tmp = q -> my;
+		q -> my = tmy;
+		tmy = tmp;
+
+		p = p -> nexploration_ratet;
+	}
+	snake -> mx = mx;
+	snake -> my = my;
+	snake -> x += mx;
+	snake -> y += my;
+    // Setup increment case from x to mx within nexploration_ratet
+}
+
+void add(int x, int y){
+	sq *tmp = (sq *)malloc(sizeof(sq)); // Start sq snake tmp with Memory Allocation
+	tmp -> x = x;
+	tmp -> y = y;
+	tmp -> mx = 1;
+	tmp -> my = 0;
+	tmp -> nexploration_ratet = snake;
+	snake = tmp;
+}
+
+void set_f(){
+	bool f = true;
+	while(f){
+		srand(time(NULL));
+		food_x = (rand() % 34) - 17;
+		srand(time(NULL));
+		food_y = (rand() % 34) - 17;
+		sq *p = snake;
+		while(p != NULL){
+			if(p -> x == food_x && p -> y == food_y){
+				f = true;
+				break;
+			}
+			f = false;
+			p = p -> nexploration_ratet;
+		}
+	}
+}
+
+bool tail(){
+	sq *p = snake;
+    //tail is touched by head
+	while(p -> nexploration_ratet != NULL){
+		if(p -> nexploration_ratet -> x == snake -> x && p -> nexploration_ratet -> y == snake -> y)
+			return true;
+		p = p -> nexploration_ratet;
+	}
+	return false;
+}
+
+void start(){
+	snake = NULL;
+    add(0, 0);
+	add(1, 0);
+	add(2, 0);
+	add(3, 0);
+	add(4, 0);
+	mx = 1;
+	my = 0;
+}
+
+float reward(int sx, int sy, int sx1, int sy1){
+	if(snake -> x == food_x && snake -> y == food_y){
+		add(food_x, food_y);//Show food
+		fail_count = 0;
+		sc++; //Increment sc by 1
+		exploration_rate = exploration_rate / 3; //Rate decrement by 1/3 from 40%
+		set_f();
+		return 1000.0;
+	}else if(tail()){
+		fail_count = 0;
+		sc = 0;
+		start(); //restart
+		fail_count++;
+		return -100000.0;
+	}else if(snake -> x > 18 || snake -> x < -18 || snake -> y > 18 || snake -> y < -18){
+		//border hit
+        start();
+		fail_count++;
+		return -1000.0;
+	}
+	if(fail_count > 50){
+        //decrease exploration_rate for hish fail_count
+		exploration_rate = 20;
+	}
+	float re2 = sqrt((sx1 - food_x) * (sx1 - food_x) + (sy1 - food_y) * (sy1 - food_y)); //Root. (x)^2 + (y)^2
+	return -re2;
+}
+
+void itera(){
+	iterations++; //Increment iterations
+	int sx = snake -> x;
+	int sy = snake -> y;
+
+	float inputs[6];
+	int sx1 = sx;
+	int sy1 = sy;
+
+	float new_q;
+	if(rand() % 100 > exploration_rate){
+		new_q = max_q(sx, sy, food_x, food_y);
+	}else{
+		int a = rand() % 4;
+        // same as in max_q
+		if(a == 0){
+			sx1 = sx + 1;
+			sy1 = sy;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(mx == -1) rev();
+			else{
+				mx =  1;
+				my =  0;
+			}
+		}else if(a == 1){
+			sx1 = sx - 1;
+			sy1 = sy;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(mx == 1) rev();
+			else{
+				mx = -1;
+				my =  0;
+			}
+		}else if(a == 2){
+			sx1 = sx;
+			sy1 = sy + 1;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(my == -1) rev();
+			else{
+				mx =  0;
+				my =  1;
+			}
+		}else{
+			sx1 = sx;
+			sy1 = sy - 1;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(my == 1) rev();
+			else{
+				mx =  0;
+				my = -1;
+			}
+		}
+
+		float *out1 = get_q(sx1, sy1);
+		new_q = out1[0];
+	}
+	get_q(sx1, sy1);
+    move();
+
+    sx1 = snake -> x;
+	sy1 = snake -> y;
+
+    float dout[1];
+	float re = reward(sx, sy, sx1, sy1);
+
+	dout[0] =  re + 0.9 * new_q - old_q;
+	net -> learn(dout);
+	old_q = new_q;
+}
+
 void timer (int = 0)
 {
-    if (d==2){
+    /*if (d==2){
         display();
     }
-    Tick();
 
-    glutTimerFunc (80,timer,0);
+    glutTimerFunc (80,timer,0);*/
+
+    if(!pus){
+		itera();
+	}
+	cout << "iterations : " << iterations << " score : " << sc << endl;
+	glutPostRedisplay();
+	glutTimerFunc(tmp, timer, 0);
+
 }
 
 /* Main function: GLUT runs as a console application starting at main()  */
