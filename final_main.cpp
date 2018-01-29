@@ -73,25 +73,25 @@ int tmp          =     50;
 
 int SCREENH=600,SCREENW=800;
 
-int Scale = 25;
-int N = 50,M = 30;
-int w = Scale * N;
-int h = Scale * M;
+//int Scale = 25;
+//int N = 50,M = 30;
+//int w = Scale * N;
+//int h = Scale * M;
 
-char sScore[15];
-char sHightScore[15];
-int Score = 0;
-int hightScore;
-int num = 7;
-int d = 1;
-int dir;
+//char sScore[15];
+//char sHightScore[15];
+//int Score = 0;
+//int hightScore;
+//int num = 7;
+//int d = 1;
+//int dir;
 bool down=false;
 
 //building b;  // building struct
 //int level=1,buildColor;  
 //Cloud s;     // cloud struct
 
-bool pause=false,wflag = true,instflag=false,uflag=false,nflag=false;  //flags
+//bool pause=false,wflag = true,instflag=false,uflag=false,nflag=false;  //flags
 
 int key1 = 3;
 
@@ -161,7 +161,8 @@ void set_f(){
 }
 
 /* Initialize OpenGL Graphics */
-void initGL(){
+void init(){
+	/*
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 
@@ -173,7 +174,7 @@ void initGL(){
 	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 
 	GLfloat acolor[] = {1.4, 1.4, 1.4, 1.0};
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);*/
 }
 
 bool check_body(int x, int y){
@@ -672,6 +673,7 @@ void display(){
 
 /* Callback handler for normal-key event */
 void keyboard(unsigned char key, int x, int y) {
+	/*
 	    switch (key) {
         case 101:   // вверх
             dir = 0;
@@ -688,7 +690,23 @@ void keyboard(unsigned char key, int x, int y) {
         case 27:    // Escape
             exit(0);
             break;
-    }
+    }*/
+	if((char)key == 'p'){
+		if(pus) pus = false;
+		else pus = true;
+	}else if((char)key == 't'){
+		tmp--;
+	}else if((char)key == 'y'){
+		if(tmp < 0) tmp = 0;
+		tmp++;
+	}else if((char)key == 's'){
+		set_f();
+	}else if((char)key == 'q'){
+		cout << "-- SKIPING 500 STEPS --" << endl;
+		pus = true;
+		for(int i = 0; i < 500; i++) itera();
+		pus = false;
+	}
 }
 
 void mouse(int button, int state, int ax, int ay)            // takes input from mouse
@@ -705,24 +723,17 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             }
             if(mx > (40) && mx < (60) && my > (20) && my < (25) )
             {
-                d = 1;
                 glClear(GL_COLOR_BUFFER_BIT);
                 key1=4;
             }
             if(mx > (40) && mx < (60) && my > (40) && my < (45) )
             {
                 key1 = 1;
-                d = 2;
-                num = 5;
-                Score = 0;
                 display();
             }
 			if(mx > (40) && mx < (60) && my > (30) && my < (35) )
             {
                 key1 = 2;
-                d = 2;
-                num = 5;
-                Score = 0;
                 display();
             }
         }
@@ -731,7 +742,6 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             if(mx > (40) && mx < (60) && my > (5) && my < (10) )
             {
                 key1=3;
-                d = 1;
                 glClear(GL_COLOR_BUFFER_BIT);
                 welcome();
             }
@@ -752,10 +762,15 @@ void timer(int = 0){
 
 void myReshape(int w, int h)
 {
-	SCREENH=h,SCREENW=w;
+	/*SCREENH=h,SCREENW=w;
 	printf("width = %d\theight= %d",w,h);
 	glViewport(0,0,w,h);
 	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
+	glMatrixMode(GL_MODELVIEW);*/
+	glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
 	glMatrixMode(GL_MODELVIEW);
@@ -763,24 +778,32 @@ void myReshape(int w, int h)
 
 /* Main function: GLUT runs as a console application starting at main()  */
 int main(int argc, char** argv){
-    srand(time(NULL));// Set random variable as current time
+    srand(time(0));// Set random variable as current time
     net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
+
+	net -> init();
+
+	start(); //Start snake layout with initial values
+
+    set_f(); //Setup food point cordinates
 
     glutInit(&argc, argv);                 // Initialize GLUT
 
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); // Use RGBA color, enable double buffering and enable depth buffer
     glutInitWindowSize (SCREENW,SCREENH);  // Set the window's initial width & height
-    glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+    glutInitWindowPosition(500, 0); // Position the window's initial top-left corner
     glutCreateWindow("Srijana: User and Neural Network game"); // Create a window with the given title
 
-    initGL();
+    init();
 
-    glutDisplayFunc(display); // Register display callback handler for window re-paint
-    glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
-    glutTimerFunc (80,timer,0);     // First timer call immediately
-
-    glutMouseFunc(mouse);   // Register callback handler for mouse event
-    glutMainLoop();           // Enter the event-processing loop
+	glutTimerFunc (400,timer,0);     // First timer call immediately
+	glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
     glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
+	glutMouseFunc(mouse);   // Register callback handler for mouse event
+
+	glutDisplayFunc(display); // Register display callback handler for window re-paint
+
+    glutMainLoop();           // Enter the event-processing loop
+    
     return 0;
 }
