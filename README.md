@@ -3,7 +3,7 @@ A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Ne
 
 **Currently in alpha state**
 
-[![Flowmaker features](https://i.imgur.com/FIacJUP.gif)](https://youtu.be/ySW2ejs6f84)
+[![Srijana features](https://i.imgur.com/6hHWMm7.gif)](https://github.com/aryaminus/srijana)
 
 **Note:**
 Make sure you have opengl, freeglut3-dev & libgl1-mesa-dev 
