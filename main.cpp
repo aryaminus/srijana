@@ -51,17 +51,17 @@ void add(int x, int y){
 	tmp -> y = y;
 	tmp -> mx = 1;
 	tmp -> my = 0;
-	tmp -> nexploration_ratet = snake;
-	snake = tmp;
+	tmp -> nexploration_ratet = snake; //next value take snake null initially
+	snake = tmp; //snake takes the tmp struct value
 }
 
 void start(){
 	snake = NULL;
-    add(0, 0);
-	add(1, 0);
-	add(2, 0);
-	add(3, 0);
-	add(4, 0);
+    add(0, 0); //head
+	add(1, 0); //2nd part
+	add(2, 0); //3rd part
+	add(3, 0); //4th part
+	add(4, 0); //tail
 	mx = 1;
 	my = 0;
 }
@@ -70,24 +70,24 @@ void set_f(){
 	bool f = true;
 	while(f){
 		srand(time(NULL));
-		food_x = (rand() % 34) - 17;
+		food_x = (rand() % 34) - 17; //random food x cordinate
 		srand(time(NULL));
-		food_y = (rand() % 34) - 17;
+		food_y = (rand() % 34) - 17; //random food y cordinate
 		sq *p = snake;
-		while(p != NULL){
-			if(p -> x == food_x && p -> y == food_y){
+		while(p != NULL){ //p not reaches null
+			if(p -> x == food_x && p -> y == food_y){ //x and y tends to food x and food y
 				f = true;
 				break;
 			}
 			f = false;
-			p = p -> nexploration_ratet;
+			p = p -> nexploration_ratet; //p takes next value
 		}
 	}
 }
 
 void init()
 {
-	glEnable(GL_DEPTH_TEST);
+	/*glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 
 	glEnable(GL_LIGHTING);
@@ -98,7 +98,7 @@ void init()
 	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 
 	GLfloat acolor[] = {1.4, 1.4, 1.4, 1.0};
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);*/
 
 }
 
@@ -232,16 +232,6 @@ float max_q(int sx, int sy, int food_x, int food_y){
 				}
 			}
 		}
-        /*
-        if 1>2,
-            1>3,
-                1>4 set new_q to out1
-                    if mx=-1 rev()
-                    else mx=1,my=0
-                else set new_q to out4 and others
-            else if 3>4 set new_q to out3 and others
-            else set new_q to out4 and others
-        */
 	}else{
 		if(out2[0] > out3[0]){
 			if(out2[0] > out4[0]){
@@ -354,17 +344,17 @@ float reward(int sx, int sy, int sx1, int sy1){
 }
 
 void itera(){
-	iterations++; //Increment iterations
-	int sx = snake -> x;
-	int sy = snake -> y;
+	iterations++; //Increment iterations (init as zero)
+	int sx = snake -> x; //take snake x value
+	int sy = snake -> y; //take snake y value
 
 	float inputs[6];
-	int sx1 = sx;
-	int sy1 = sy;
+	int sx1 = sx; //1st value
+	int sy1 = sy; //2nd value
 
 	float new_q;
-	if(rand() % 100 > exploration_rate){
-		new_q = max_q(sx, sy, food_x, food_y);
+	if(rand() % 100 > exploration_rate){ //random value is greater than init 40 exp_rate
+		new_q = max_q(sx, sy, food_x, food_y); //pass values to max_q
 	}else{
 		int a = rand() % 4;
         // same as in max_q
@@ -440,8 +430,8 @@ void itera(){
 }
 
 void myIdleFunc(int a) {
-	if(!pus){
-		itera();
+	if(!pus){ //init as false
+		itera(); //continue iterations
 	}
 	cout << "iterations : " << iterations << " score : " << sc << endl;
 	glutPostRedisplay();
@@ -480,7 +470,7 @@ void keyboard(unsigned char key, int x, int y)
 void par(float x1, float x2, float y1, float y2, float z1, float z2){
 	glColor3f(1.0, 0.0, 1.0);
 
-	glBegin(GL_QUADS);
+	glBegin(GL_POLYGON);
 
 	glVertex3f(x1, y1, z1);
 	glVertex3f(x2, y1, z1);
@@ -503,6 +493,10 @@ void display(void)
 	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
 	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
 	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
+	//par(0.0,  9.2,  0.0,  9.2, 0.0, 0.0);
+	//par(100.0,  9.2, 0.0, -8.7, 0.0, 0.0);
+	//par(100.0, -8.7, 0.0,  9.2, 0.0, 0.0);
+	//par( 0.0,  9.0, 100.0,  9.2, 0.0, 0.0);
 	while(p != NULL){
 		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0);
 		p = p -> nexploration_ratet;

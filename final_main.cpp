@@ -22,16 +22,6 @@
 
 #include "neural.cpp"
 
-/* Handler for window-repaint event. Call back when the window first appears and
-   whenever the window needs to be re-painted. */
-/*
-GLfloat xSpeed = 0.02f;      // Ball's speed in x and y directions
-GLfloat ySpeed = 0.007f;
-int refreshMills = 30;      // Refresh period in milliseconds
-bool pause=false;        // Movement paused or resumed
-GLfloat xSpeedSaved, ySpeedSaved;  // To support resume
-*/
-
 using namespace std;
 
 typedef struct sq{
@@ -71,37 +61,13 @@ float old_q      =    0.0;
 
 int tmp          =     50;
 
+int wa,ha;
+
 int SCREENH=600,SCREENW=800;
 
-//int Scale = 25;
-//int N = 50,M = 30;
-//int w = Scale * N;
-//int h = Scale * M;
-
-//char sScore[15];
-//char sHightScore[15];
-//int Score = 0;
-//int hightScore;
-//int num = 7;
-//int d = 1;
-//int dir;
 bool down=false;
 
-//building b;  // building struct
-//int level=1,buildColor;  
-//Cloud s;     // cloud struct
-
-//bool pause=false,wflag = true,instflag=false,uflag=false,nflag=false;  //flags
-
 int key1 = 3;
-
-/*
-void keyPressed(unsigned char,int,int);
-void mouse(int button, int state, int x, int y);
-void printString(float x,float y,float z,void *font,char *string);//what does this do??
-void welcome();
-void display();
-*/
 
 void drawString(float x,float y,float z,void *font,char *string)
 {
@@ -515,9 +481,9 @@ void itera(){
 }
 
 void par(float x1, float x2, float y1, float y2, float z1, float z2){
-	glColor3f(1.0, 0.0, 1.0);
+	glColor3f(0.3,0.56,0.84);
 
-	glBegin(GL_QUADS);
+	glBegin(GL_POLYGON);
 
 	glVertex3f(x1, y1, z1);
 	glVertex3f(x2, y1, z1);
@@ -633,6 +599,7 @@ void DrawNeural(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity ();
+	//gluPerspective(45.0, (float)wa/(float)ha, 0.1, 200.0);
 
 	glTranslatef(0.0, 0.0, -22.0);
 	int i;
@@ -661,6 +628,7 @@ void display(){
             break;
         case 3:
             welcome();
+			//DrawNeural();
             break;
         case 4:
             DrawRules();
@@ -668,7 +636,6 @@ void display(){
     }
     glFlush();
 	glutSwapBuffers();
-    glFlush();
 }
 
 /* Callback handler for normal-key event */
@@ -769,9 +736,11 @@ void myReshape(int w, int h)
 	glLoadIdentity();
 	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
 	glMatrixMode(GL_MODELVIEW);*/
+	wa = w, ha = h;
 	glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+	//gluPerspective(45.0, (float)w/(float)h, 0.1, 200.0);
 	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -794,7 +763,7 @@ int main(int argc, char** argv){
     glutInitWindowPosition(500, 0); // Position the window's initial top-left corner
     glutCreateWindow("Srijana: User and Neural Network game"); // Create a window with the given title
 
-    init();
+    //init();
 
 	glutTimerFunc (400,timer,0);     // First timer call immediately
 	glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
