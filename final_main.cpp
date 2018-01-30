@@ -63,11 +63,13 @@ int tmp          =     50;
 
 int wa,ha;
 
-int SCREENH=600,SCREENW=800;
+int SCREENH=450,SCREENW=450;
 
 bool down=false;
 
 int key1 = 3;
+
+bool neural_check = false;
 
 void drawString(float x,float y,float z,void *font,char *string)
 {
@@ -596,6 +598,12 @@ void welcome(){
 }
 
 void DrawNeural(){
+	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
+
+	net -> init();
+
+	neural_check = true;
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity ();
@@ -718,13 +726,14 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
 }
 
 void timer(int = 0){
-    if(!pus){
-		itera();
+	if (neural_check){
+		if(!pus){
+			itera();
+		}
+		cout << "iterations : " << iterations << " score : " << sc << endl;
 	}
-	cout << "iterations : " << iterations << " score : " << sc << endl;
 	glutPostRedisplay();
 	glutTimerFunc(tmp, timer, 0);
-
 }
 
 void myReshape(int w, int h)
@@ -740,17 +749,18 @@ void myReshape(int w, int h)
 	glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//gluPerspective(45.0, (float)w/(float)h, 0.1, 200.0);
-	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
-	glMatrixMode(GL_MODELVIEW);
+	if (key1 == 3){
+		glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
+		glMatrixMode(GL_MODELVIEW);
+	}
+	if (key1 == 1 || key1 == 2){
+		gluPerspective(45.0, (float)w/(float)h, 0.1, 200.0);
+	}
 }
 
 /* Main function: GLUT runs as a console application starting at main()  */
 int main(int argc, char** argv){
     srand(time(0));// Set random variable as current time
-    net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
-
-	net -> init();
 
 	start(); //Start snake layout with initial values
 
