@@ -1,11 +1,24 @@
+/*
+ * final_main.cpp: OpenGL/GLUT C/C++ Setup graphics project
+ * To compile with -lfreeglut -lglu32 -lopengl32
+ */
+
+//http://www3.ntu.edu.sg/home/ehchua/programming/opengl/cg_introduction.html -> main reference
+
+//#include <windows.h>  // for MS Windows
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
+#include <fstream>
+#include<stdlib.h>
+#include<stdio.h>
+
+#include "math.h"
+#include<time.h>
 
 #include <GL/gl.h>
-#include <GL/glut.h>
+#include <GL/glut.h>  // GLUT, include glu.h and gl.h
+#include <GL/glu.h>
 
 #include "neural.cpp"
 
@@ -21,8 +34,6 @@ typedef struct sq{
 
 sq *snake = NULL;
 
-int mx;
-int my;
 neural *net;
 
 int num_layers   =      2;
@@ -31,19 +42,51 @@ int num_outputs  =      1;
 
 float learning_rate     = 0.0000001;
 
-int food_x       =     -6;
-int food_y       =     -6;
-
 bool  pus        =  false;
+
 int iterations   =      0;
-int sc           =      0;
-int tmp          =     50;
 
 int	  exploration_rate  = 	     40;
 
+int food_x       =     -6;
+int food_y       =     -6;
+
+int mx;
+int my;
+
 int   fail_count =      0;
+int sc           =      0;
 
 float old_q      =    0.0;
+
+int tmp          =     50;
+
+int wa,ha;
+
+int SCREENH=450,SCREENW=450;
+
+bool down=false;
+
+int key1 = 3;
+
+bool neural_check = false;
+
+void drawString(float x,float y,float z,void *font,char *string)
+{
+	char *c;
+	glRasterPos3f(x, y,z);
+
+	for (c=string; *c != '\0'; c++)
+	{
+		glutBitmapCharacter(font, *c);
+	}
+}
+
+void draw_string(void *font, const char* string)
+{
+    while(*string)
+        glutStrokeCharacter(font, *string++);
+}
 
 void add(int x, int y){
 	sq *tmp = (sq *)malloc(sizeof(sq)); // Start sq snake tmp with Memory Allocation
@@ -51,17 +94,17 @@ void add(int x, int y){
 	tmp -> y = y;
 	tmp -> mx = 1;
 	tmp -> my = 0;
-	tmp -> nexploration_ratet = snake; //next value take snake null initially
-	snake = tmp; //snake takes the tmp struct value
+	tmp -> nexploration_ratet = snake;
+	snake = tmp;
 }
 
 void start(){
 	snake = NULL;
-    add(0, 0); //head
-	add(1, 0); //2nd part
-	add(2, 0); //3rd part
-	add(3, 0); //4th part
-	add(4, 0); //tail
+    add(0, 0);
+	add(1, 0);
+	add(2, 0);
+	add(3, 0);
+	add(4, 0);
 	mx = 1;
 	my = 0;
 }
@@ -70,24 +113,25 @@ void set_f(){
 	bool f = true;
 	while(f){
 		srand(time(NULL));
-		food_x = (rand() % 34) - 17; //random food x cordinate
+		food_x = (rand() % 34) - 17;
 		srand(time(NULL));
-		food_y = (rand() % 34) - 17; //random food y cordinate
+		food_y = (rand() % 34) - 17;
 		sq *p = snake;
-		while(p != NULL){ //p not reaches null
-			if(p -> x == food_x && p -> y == food_y){ //x and y tends to food x and food y
+		while(p != NULL){
+			if(p -> x == food_x && p -> y == food_y){
 				f = true;
 				break;
 			}
 			f = false;
-			p = p -> nexploration_ratet; //p takes next value
+			p = p -> nexploration_ratet;
 		}
 	}
 }
 
-void init()
-{
-	/*glEnable(GL_DEPTH_TEST);
+/* Initialize OpenGL Graphics */
+void init(){
+	/*
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 
 	glEnable(GL_LIGHTING);
@@ -99,7 +143,6 @@ void init()
 
 	GLfloat acolor[] = {1.4, 1.4, 1.4, 1.0};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);*/
-
 }
 
 bool check_body(int x, int y){
@@ -232,6 +275,16 @@ float max_q(int sx, int sy, int food_x, int food_y){
 				}
 			}
 		}
+        /*
+        if 1>2,
+            1>3,
+                1>4 set new_q to out1
+                    if mx=-1 rev()
+                    else mx=1,my=0
+                else set new_q to out4 and others
+            else if 3>4 set new_q to out3 and others
+            else set new_q to out4 and others
+        */
 	}else{
 		if(out2[0] > out3[0]){
 			if(out2[0] > out4[0]){
@@ -344,17 +397,17 @@ float reward(int sx, int sy, int sx1, int sy1){
 }
 
 void itera(){
-	iterations++; //Increment iterations (init as zero)
-	int sx = snake -> x; //take snake x value
-	int sy = snake -> y; //take snake y value
+	iterations++; //Increment iterations
+	int sx = snake -> x;
+	int sy = snake -> y;
 
 	float inputs[6];
-	int sx1 = sx; //1st value
-	int sy1 = sy; //2nd value
+	int sx1 = sx;
+	int sy1 = sy;
 
 	float new_q;
-	if(rand() % 100 > exploration_rate){ //random value is greater than init 40 exp_rate
-		new_q = max_q(sx, sy, food_x, food_y); //pass values to max_q
+	if(rand() % 100 > exploration_rate){
+		new_q = max_q(sx, sy, food_x, food_y);
 	}else{
 		int a = rand() % 4;
         // same as in max_q
@@ -429,26 +482,190 @@ void itera(){
 	old_q = new_q;
 }
 
-void myIdleFunc(int a) {
-	if(!pus){ //init as false
-		itera(); //continue iterations
+void par(float x1, float x2, float y1, float y2, float z1, float z2){
+	glColor3f(0.3,0.56,0.84);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3f(x1, y1, z1);
+	glVertex3f(x2, y1, z1);
+	glVertex3f(x2, y2, z1);
+	glVertex3f(x1, y2, z1);
+
+	glEnd();
+}
+
+void DrawRules(){
+		glColor3f(0.3,0.56,0.84);   // background
+		glBegin(GL_POLYGON);
+		glVertex3f(0.0,0.0,0.0);
+		glColor3f(0.137,0.137,0.556);
+		glVertex3f(100.0,0.0,0.0);
+		glColor3f(0.196,0.196,0.8);
+		glVertex3f(100.0,100.0,0.0);
+		glVertex3f(0.0,100.0,0.0);
+		glEnd();
+		glPushMatrix();
+		glScalef(0.8,0.8,0);
+		glPopMatrix();
+		glColor3f(0.137,0.137,0.556);
+		glRectf(20.0,20.0,80.0,80.0);
+		glColor3f(0.8,0.8,0.8);
+		glRectf(21.0,21.0,79.0,79.0);
+
+
+		glColor3f(0.196,0.196,0.8);
+		glRectf(40,5,60,10);
+		glColor3f(0.8,0.8,0.8);
+		glRectf(40.5,5.5,59.5,9.5);
+
+		glColor3f(0.137,0.137,0.556);
+		drawString(46,6,0,GLUT_BITMAP_TIMES_ROMAN_24,"BACK");
+
+		glColor3f(0.137,0.137,0.556);
+		drawString(37,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY");
+		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Click and hold mouse left key to gain altitude of ");
+		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    the plane.");
+		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- Release the mouse left key to reduce the altitude.");
+		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Use the Right mouse key to speed up the plane(NOS)");
+		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- Main aim of the game is to avoid the obstacles ");
+		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"    such as buildings and clouds.");
+		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- Also the meter at the bottom shows the distance ");
+		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"    travelled,NITROS left,Atitude and the LEVEL.");
+		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As you reach distance multples of 50 tour level ");
+		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"    increases as well as the speed of the plane.");
+		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
+
+		glutPostRedisplay();
+}
+
+void welcome(){
+	glColor3f(0.3,0.56,0.84);   //welcome background
+	glBegin(GL_POLYGON);
+	glVertex3f(0.0,0.0,0.0);
+	glColor3f(0.137,0.137,0.556);
+	glVertex3f(100.0,0.0,0.0);
+	glColor3f(0.196,0.196,0.8);
+	glVertex3f(100.0,100.0,0.0);
+	glVertex3f(0.0,100.0,0.0);
+	glEnd();
+
+	// button 1 .. PLAY
+	glColor3f(0.196,0.196,0.8);
+	glRectf(39.5,39.5,60.5,45.5);
+
+	glColor3f(0.8,0.8,0.8);
+	glRectf(40,40,60,45);
+	glColor3f(0.137,0.137,0.556);
+	drawString(47,42,0,GLUT_BITMAP_HELVETICA_18,"USER");
+
+	// button 2 .. instructions
+	glColor3f(0.196,0.196,0.8);
+	glRectf(39.5,29.5,60.5,35.5);
+
+	glColor3f(0.8,0.8,0.8);
+	glRectf(40,30,60,35);
+	glColor3f(0.137,0.137,0.556);
+	drawString(41,31,0,GLUT_BITMAP_HELVETICA_18,"NETWORK_PLAY");
+
+	// button 3 .. ABOUT
+	glColor3f(0.196,0.196,0.8);
+	glRectf(39.5,19.5,60.5,25.5);
+
+	glColor3f(0.8,0.8,0.8);
+	glRectf(40,20,60,25);
+	glColor3f(0.137,0.137,0.556);
+	drawString(46,21,0,GLUT_BITMAP_HELVETICA_18,"HOW_TO");
+
+	// button 4 .. exit
+	glColor3f(0.196,0.196,0.8);
+	glRectf(39.5,9.5,60.5,15.5);
+
+	glColor3f(0.8,0.8,0.8);
+	glRectf(40,10,60,15);
+	glColor3f(0.137,0.137,0.556);
+	drawString(47,11,0,GLUT_BITMAP_HELVETICA_18,"EXIT");
+
+
+	glPushMatrix();
+
+	glColor3f(0.8,0.8,0.8);
+	drawString(25.5,92,0,GLUT_BITMAP_TIMES_ROMAN_24,"COMPUTER GRAPHICS PROJECT ");
+	drawString(35.5,80,0,GLUT_BITMAP_TIMES_ROMAN_24,"SRIJANA");
+	glPopMatrix();
+	glColor3f(0.137,0.137,0.556);
+
+}
+
+void DrawNeural(){
+	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
+
+	net -> init();
+
+	neural_check = true;
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity ();
+	//gluPerspective(45.0, (float)wa/(float)ha, 0.1, 200.0);
+
+	glTranslatef(0.0, 0.0, -22.0);
+	int i;
+	sq *p = snake;
+	par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
+	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
+	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
+	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
+	while(p != NULL){
+		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0);
+		p = p -> nexploration_ratet;
 	}
-	cout << "iterations : " << iterations << " score : " << sc << endl;
-	glutPostRedisplay();
-	glutTimerFunc(tmp, myIdleFunc, 0);
+	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0);
 }
 
-void Reshape(int w, int h)
-{
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0, (float)w/(float)h, 0.1, 200.0);
+void display(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	switch (key1)
+    {
+        case 1:
+            DrawNeural();
+            break;
+        case 2:
+            DrawNeural();
+            break;
+        case 3:
+            welcome();
+			//DrawNeural();
+            break;
+        case 4:
+            DrawRules();
+            break;
+    }
+    glFlush();
+	glutSwapBuffers();
 }
 
-void keyboard(unsigned char key, int x, int y)
-{
+/* Callback handler for normal-key event */
+void keyboard(unsigned char key, int x, int y) {
+	/*
+	    switch (key) {
+        case 101:   // вверх
+            dir = 0;
+            break;
+        case 102:   // направо
+            dir = 2;
+            break;
+        case 100:   // налево
+            dir = 1;
+            break;
+        case 103:   // вниз
+            dir = 3;
+            break;
+        case 27:    // Escape
+            exit(0);
+            break;
+    }*/
 	if((char)key == 'p'){
 		if(pus) pus = false;
 		else pus = true;
@@ -467,77 +684,108 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }
 
-void par(float x1, float x2, float y1, float y2, float z1, float z2){
-	glColor3f(1.0, 0.0, 1.0);
-
-	glBegin(GL_POLYGON);
-
-	glVertex3f(x1, y1, z1);
-	glVertex3f(x2, y1, z1);
-	glVertex3f(x2, y2, z1);
-	glVertex3f(x1, y2, z1);
-
-	glEnd();
-}
-
-void display(void)
+void mouse(int button, int state, int ax, int ay)            // takes input from mouse
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity ();
-
-	glTranslatef(0.0, 0.0, -22.0);
-	int i;
-	sq *p = snake;
-	par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
-	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
-	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
-	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
-	//par(0.0,  9.2,  0.0,  9.2, 0.0, 0.0);
-	//par(100.0,  9.2, 0.0, -8.7, 0.0, 0.0);
-	//par(100.0, -8.7, 0.0,  9.2, 0.0, 0.0);
-	//par( 0.0,  9.0, 100.0,  9.2, 0.0, 0.0);
-	while(p != NULL){
-		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0);
-		p = p -> nexploration_ratet;
-	}
-	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0);
-	glutSwapBuffers();
+	int mx=ax*100/SCREENW,my=(SCREENH-ay)*100/SCREENH;		// m = mouse cordinate to graphics
+	down= button==GLUT_LEFT_BUTTON && state==GLUT_LEFT;
+	if(down)
+    {
+        if (key1==3)
+        {
+            if(mx > (40) && mx < (60) && my > (10) && my < (15) )
+            {
+                exit(0);
+            }
+            if(mx > (40) && mx < (60) && my > (20) && my < (25) )
+            {
+                glClear(GL_COLOR_BUFFER_BIT);
+                key1=4;
+            }
+            if(mx > (40) && mx < (60) && my > (40) && my < (45) )
+            {
+                key1 = 1;
+                display();
+            }
+			if(mx > (40) && mx < (60) && my > (30) && my < (35) )
+            {
+                key1 = 2;
+                display();
+            }
+        }
+        if (key1==4)
+        {
+            if(mx > (40) && mx < (60) && my > (5) && my < (10) )
+            {
+                key1=3;
+                glClear(GL_COLOR_BUFFER_BIT);
+                welcome();
+            }
+        }
+    }
+    glutMouseFunc(mouse);
 }
 
+void timer(int = 0){
+	if (neural_check){
+		if(!pus){
+			itera();
+		}
+		cout << "iterations : " << iterations << " score : " << sc << endl;
+	}
+	glutPostRedisplay();
+	glutTimerFunc(tmp, timer, 0);
+}
+
+void myReshape(int w, int h)
+{
+	/*SCREENH=h,SCREENW=w;
+	printf("width = %d\theight= %d",w,h);
+	glViewport(0,0,w,h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
+	glMatrixMode(GL_MODELVIEW);*/
+	//wa = w, ha = h;
+	glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (key1 == 3){
+		glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
+		glMatrixMode(GL_MODELVIEW);
+	}
+	if (key1 == 1 || key1 == 2){
+		gluPerspective(45.0, (float)w/(float)h, 0.1f, 200.0);
+		gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
+		glMatrixMode(GL_MODELVIEW);
+		//glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
+	}
+}
+
+/* Main function: GLUT runs as a console application starting at main()  */
 int main(int argc, char** argv){
-    cout << "-----------------------------------------------" << endl;
-	cout << endl;
-	cout << "       --- Srijana - A OpenGL & NN Game ---    " << endl;
-	cout << endl;
-	cout << "written by: Sunim Acharya(72080)in cpp in linux " << endl;
-	cout << endl;
-	cout << "-----------------------------------------------" << endl;
+    srand(time(0));// Set random variable as current time
 
-    srand(time(NULL));// Set random variable as current time
-
-    net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
-
-    net -> init();
-
-    start(); //Start snake layout with initial values
+	start(); //Start snake layout with initial values
 
     set_f(); //Setup food point cordinates
 
-    glutInit(&argc,argv); //Setup glutInit
-    glutInitDisplayMode ( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); //Set Display window
-    glutInitWindowSize(450,450); //Window Size
-	glutInitWindowPosition(500,0); //Window Position
-    glutCreateWindow("Srijana : A C and OpenGL game with NN"); //Window with the "..." name
+    glutInit(&argc, argv);                 // Initialize GLUT
 
-    init(); //GL Setup
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); // Use RGBA color, enable double buffering and enable depth buffer
+    glutInitWindowSize (SCREENW,SCREENH);  // Set the window's initial width & height
+    glutInitWindowPosition(500, 0); // Position the window's initial top-left corner
+    glutCreateWindow("Srijana: User and Neural Network game"); // Create a window with the given title
 
-    glutTimerFunc(400, myIdleFunc, 0); //Timer setup
-	glutReshapeFunc(Reshape);
-    glutKeyboardFunc( keyboard );
-    glutDisplayFunc(display);
-    glutMainLoop();
+    //init();
 
-	return 0;
+	glutTimerFunc (400,timer,0);     // First timer call immediately
+	glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
+    glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
+	glutMouseFunc(mouse);   // Register callback handler for mouse event
 
+	glutDisplayFunc(display); // Register display callback handler for window re-paint
+
+    glutMainLoop();           // Enter the event-processing loop
+    
+    return 0;
 }
