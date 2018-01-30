@@ -524,16 +524,16 @@ void DrawRules(){
 
 		glColor3f(0.137,0.137,0.556);
 		drawString(37,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY");
-		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Click and hold mouse left key to gain altitude of ");
-		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    the plane.");
-		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- Release the mouse left key to reduce the altitude.");
-		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Use the Right mouse key to speed up the plane(NOS)");
-		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- Main aim of the game is to avoid the obstacles ");
-		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"    such as buildings and clouds.");
-		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- Also the meter at the bottom shows the distance ");
-		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"    travelled,NITROS left,Atitude and the LEVEL.");
-		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As you reach distance multples of 50 tour level ");
-		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"    increases as well as the speed of the plane.");
+		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Choose any one of the options:");
+		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    Menu:");
+		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- User: Currently to Neural");
+		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Play_neural: Sends neural Data");
+		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- How_to: reaches this screen");
+		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"  Exit: Forwards: exit(0)");
+		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- The game initializes net neural with default values");
+		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"  then sets up 1-4 polygons for head & tail of snake");
+		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As the values and timer is setup the par is setup ");
+		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"  for border and with iteration the snake forwards to food");
 		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
 
 		glutPostRedisplay();
