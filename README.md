@@ -42,6 +42,11 @@ For Codeblocks:
 - [ ] Implementation of better algorithm than Q-learning
 - [ ] Setup for Keyboard press to navigate snake
 
+## Packages:
+1. <a href="https://github.com/Ilyomix/Snake_Unix" target="_blank">snake-unix</a>
+2. <a href="https://github.com/arpithank/Computer-Graphics-Airplane-Game" target="_blank">airplane-game</a>
+3. <a href="https://github.com/inf0-warri0r/q_snake" target="_blank">q_snake</a>
+
 -----------------------------------------------------------------------------------------------------------
 
 ## Contributing
