@@ -745,7 +745,7 @@ void myReshape(int w, int h)
 	glLoadIdentity();
 	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
 	glMatrixMode(GL_MODELVIEW);*/
-	wa = w, ha = h;
+	//wa = w, ha = h;
 	glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -754,7 +754,10 @@ void myReshape(int w, int h)
 		glMatrixMode(GL_MODELVIEW);
 	}
 	if (key1 == 1 || key1 == 2){
-		gluPerspective(45.0, (float)w/(float)h, 0.1, 200.0);
+		gluPerspective(45.0, (float)w/(float)h, 0.1f, 200.0);
+		gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
+		glMatrixMode(GL_MODELVIEW);
+		//glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
 	}
 }
 
