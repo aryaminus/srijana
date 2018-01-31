@@ -42,7 +42,7 @@ int num_outputs  =      1;
 
 float learning_rate     = 0.0000001;
 
-bool  pus        =  false;
+//bool  pus        =  false; //push button for keyboard hit
 
 int iterations   =      0;
 
@@ -59,7 +59,7 @@ int sc           =      0;
 
 float old_q      =    0.0;
 
-int tmp          =     50;
+//int tmp          =     50;
 
 int wa,ha;
 
@@ -67,7 +67,7 @@ int SCREENH=450,SCREENW=450;
 
 bool down=false;
 
-int key1 = 3;
+int key1 = 2;
 
 bool neural_check = false;
 
@@ -669,7 +669,7 @@ void keyboard(unsigned char key, int x, int y) {
             exit(0);
             break;
     }*/
-	if((char)key == 'p'){
+	/*if((char)key == 'p'){
 		if(pus) pus = false;
 		else pus = true;
 	}else if((char)key == 't'){
@@ -684,7 +684,7 @@ void keyboard(unsigned char key, int x, int y) {
 		pus = true;
 		for(int i = 0; i < 500; i++) itera();
 		pus = false;
-	}
+	}*/
 }
 
 void mouse(int button, int state, int ax, int ay)            // takes input from mouse
@@ -729,14 +729,12 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
 }
 
 void timer(int = 0){
-	if (neural_check){
-		if(!pus){
-			itera();
-		}
+	if (neural_check){ //only when neural_check is true
+		itera();
 		cout << "iterations : " << iterations << " score : " << sc << endl;
 	}
-	glutPostRedisplay();
-	glutTimerFunc(tmp, timer, 0);
+	glutPostRedisplay(); //marks the current window as needing to be redisplayed
+	glutTimerFunc(50, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
 
 void myReshape(int w, int h)
