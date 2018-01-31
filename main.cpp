@@ -483,20 +483,21 @@ void itera(){
 }
 
 void par(float x1, float x2, float y1, float y2, float z1, float z2){
-	glColor3f(0.3,0.56,0.84);
+	glColor3f(0.3,0.56,0.84); //Blue
 
-	glBegin(GL_POLYGON);
+	glBegin(GL_POLYGON); // Each set of 4 vertices form a quad from polygon
 
-	glVertex3f(x1, y1, z1);
+	glVertex3f(x1, y1, z1); // 3 GLfloat parameters
 	glVertex3f(x2, y1, z1);
 	glVertex3f(x2, y2, z1);
 	glVertex3f(x1, y2, z1);
 
-	glEnd();
+	glEnd(); //Gl end
 }
 
 void DrawRules(){
 		glColor3f(0.3,0.56,0.84);   // background
+
 		glBegin(GL_POLYGON);
 		glVertex3f(0.0,0.0,0.0);
 		glColor3f(0.137,0.137,0.556);
@@ -505,15 +506,15 @@ void DrawRules(){
 		glVertex3f(100.0,100.0,0.0);
 		glVertex3f(0.0,100.0,0.0);
 		glEnd();
-		glPushMatrix();
-		glScalef(0.8,0.8,0);
-		glPopMatrix();
+
+		glPushMatrix(); // Save model-view matrix setting
+		glScalef(0.8,0.8,0); //multiply the current matrix by a general scaling matrix
+		glPopMatrix();  // Restore the model-view matrix
+
 		glColor3f(0.137,0.137,0.556);
-		glRectf(20.0,20.0,80.0,80.0);
+		glRectf(20.0,20.0,80.0,80.0); //draw a rectangle
 		glColor3f(0.8,0.8,0.8);
 		glRectf(21.0,21.0,79.0,79.0);
-
-
 		glColor3f(0.196,0.196,0.8);
 		glRectf(40,5,60,10);
 		glColor3f(0.8,0.8,0.8);
@@ -536,7 +537,7 @@ void DrawRules(){
 		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"  for border and with iteration the snake forwards to food");
 		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
 
-		glutPostRedisplay();
+		glutPostRedisplay(); //marks the current window as needing to be redisplayed
 }
 
 void welcome(){
@@ -588,7 +589,7 @@ void welcome(){
 	drawString(47,11,0,GLUT_BITMAP_HELVETICA_18,"EXIT");
 
 
-	glPushMatrix();
+	glPushMatrix(); // Save model-view matrix setting
 
 	glColor3f(0.8,0.8,0.8);
 	drawString(25.5,92,0,GLUT_BITMAP_TIMES_ROMAN_24,"COMPUTER GRAPHICS PROJECT ");
@@ -602,28 +603,26 @@ void DrawNeural(){
 
 	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
 
-	net -> init();
+	net -> init(); //reach neural_init
 
 	neural_check = true;
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glMatrixMode(GL_MODELVIEW);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color buffer and depth buffer
 	glLoadIdentity ();
 	gluPerspective(45.0, (float)SCREENW/(float)SCREENH, 0.1f, 200.0);
-	gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
+	//gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
 
-	glTranslatef(0.0, 0.0, -22.0);
-	int i;
+	glTranslatef(0.0, 0.0, -22.0); // Translate by -22 on z-axis
 	sq *p = snake;
 	par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
 	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
 	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
 	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
 	while(p != NULL){
-		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0);
-		p = p -> nexploration_ratet;
+		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0); //decrement
+		p = p -> nexploration_ratet; //p reach null nexplorartion
 	}
-	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0);
+	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
 }
 
 void display(){
@@ -640,7 +639,6 @@ void display(){
             break;
         case 3:
             welcome();
-			//DrawNeural();
             break;
         case 4:
             DrawRules();

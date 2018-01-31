@@ -37,8 +37,8 @@ For Codeblocks:
 ```
 
 ### TODO:
-- [ ] Fix gluPerspective from glOrtho when moving from welcome() to DrawNeural()
-- [ ] When clicked User/Play_Neural, resize is needed which needs to be fixed
+- [] Fix gluPerspective from glOrtho when moving from welcome() to DrawNeural()
+- [x] When clicked User/Play_Neural, resize is needed which needs to be fixed
 - [ ] Implementation of better algorithm than Q-learning
 - [ ] Setup for Keyboard press to navigate snake
 
