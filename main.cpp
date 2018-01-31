@@ -546,7 +546,7 @@ void welcome(){
 	glVertex3f(0.0,100.0,0.0);
 	glEnd();
 
-	// button 1 .. PLAY
+	// button 1 .. User
 	glColor3f(0.196,0.196,0.8);
 	glRectf(39.5,39.5,60.5,45.5);
 
@@ -555,28 +555,27 @@ void welcome(){
 	glColor3f(0.137,0.137,0.556);
 	drawString(47,42,0,GLUT_BITMAP_HELVETICA_18,"USER");
 
-	// button 2 .. instructions
+	// button 2 .. Network_play
 	glColor3f(0.196,0.196,0.8);
 	glRectf(39.5,29.5,60.5,35.5);
 
 	glColor3f(0.8,0.8,0.8);
 	glRectf(40,30,60,35);
 	glColor3f(0.137,0.137,0.556);
-	drawString(41,31,0,GLUT_BITMAP_HELVETICA_18,"NETWORK_PLAY");
+	drawString(41,31,0,GLUT_BITMAP_HELVETICA_18,"NN_PLAY");
 
-	// button 3 .. ABOUT
+	// button 3 .. How_to
 	glColor3f(0.196,0.196,0.8);
 	glRectf(39.5,19.5,60.5,25.5);
 
 	glColor3f(0.8,0.8,0.8);
 	glRectf(40,20,60,25);
 	glColor3f(0.137,0.137,0.556);
-	drawString(46,21,0,GLUT_BITMAP_HELVETICA_18,"HOW_TO");
+	drawString(46,21,0,GLUT_BITMAP_HELVETICA_18,"HOW?");
 
 	// button 4 .. exit
 	glColor3f(0.196,0.196,0.8);
 	glRectf(39.5,9.5,60.5,15.5);
-
 	glColor3f(0.8,0.8,0.8);
 	glRectf(40,10,60,15);
 	glColor3f(0.137,0.137,0.556);
@@ -586,7 +585,7 @@ void welcome(){
 	glPushMatrix(); // Save model-view matrix setting
 
 	glColor3f(0.8,0.8,0.8);
-	drawString(25.5,92,0,GLUT_BITMAP_TIMES_ROMAN_24,"COMPUTER GRAPHICS PROJECT ");
+	drawString(25.5,92,0,GLUT_BITMAP_TIMES_ROMAN_24,"GRAPHICS PROJECT ");
 	drawString(35.5,80,0,GLUT_BITMAP_TIMES_ROMAN_24,"SRIJANA");
 	glPopMatrix();
 	glColor3f(0.137,0.137,0.556);
@@ -620,8 +619,8 @@ void DrawNeural(){
 }
 
 void display(){
-	glMatrixMode(GL_PROJECTION);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glMatrixMode(GL_PROJECTION);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	switch (key1)
     {
