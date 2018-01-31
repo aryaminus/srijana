@@ -540,6 +540,7 @@ void DrawRules(){
 }
 
 void welcome(){
+	glMatrixMode(GL_PROJECTION);
 	glColor3f(0.3,0.56,0.84);   //welcome background
 	glBegin(GL_POLYGON);
 	glVertex3f(0.0,0.0,0.0);
@@ -598,6 +599,7 @@ void welcome(){
 }
 
 void DrawNeural(){
+	glMatrixMode(GL_PROJECTION);
 	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
 
 	net -> init();
@@ -624,6 +626,7 @@ void DrawNeural(){
 }
 
 void display(){
+	glMatrixMode(GL_PROJECTION);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	switch (key1)
