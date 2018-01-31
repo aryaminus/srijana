@@ -61,7 +61,7 @@ float old_q      =    0.0;
 
 //int tmp          =     50;
 
-int wa,ha;
+//int wa,ha;
 
 int SCREENH=450,SCREENW=450;
 
@@ -74,18 +74,12 @@ bool neural_check = false;
 void drawString(float x,float y,float z,void *font,char *string)
 {
 	char *c;
-	glRasterPos3f(x, y,z);
+	glRasterPos3f(x, y,z); //Specifies the raster position for pixel operations.
 
 	for (c=string; *c != '\0'; c++)
 	{
-		glutBitmapCharacter(font, *c);
+		glutBitmapCharacter(font, *c); //renders a bitmap character using OpenGL
 	}
-}
-
-void draw_string(void *font, const char* string)
-{
-    while(*string)
-        glutStrokeCharacter(font, *string++);
 }
 
 void add(int x, int y){
