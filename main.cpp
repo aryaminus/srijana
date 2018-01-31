@@ -67,7 +67,7 @@ int SCREENH=450,SCREENW=450;
 
 bool down=false;
 
-int key1 = 2;
+int key1 = 3;
 
 bool neural_check = false;
 
@@ -739,32 +739,24 @@ void timer(int = 0){
 
 void myReshape(int w, int h)
 {
-	/*SCREENH=h,SCREENW=w;
-	printf("width = %d\theight= %d",w,h);
-	glViewport(0,0,w,h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
-	glMatrixMode(GL_MODELVIEW);*/
-	//wa = w, ha = h;
-	glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	glViewport(0, 0, w, h); // Set the viewport to cover the new window
+	// Set the aspect ratio of the clipping area to match the viewport
+    glMatrixMode(GL_PROJECTION); // To operate on the Projection matrix
+	glLoadIdentity(); // Reset the model-view matrix
 	if (key1 == 3){
 		glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
-		glMatrixMode(GL_MODELVIEW);
+		//glMatrixMode(GL_MODELVIEW); // To operate on Model-View matrix
 	}
 	if (key1 == 1 || key1 == 2){
 		gluPerspective(45.0, (float)w/(float)h, 0.1f, 200.0);
 		gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
-		glMatrixMode(GL_MODELVIEW);
 		//glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
 	}
 }
 
 /* Main function: GLUT runs as a console application starting at main()  */
 int main(int argc, char** argv){
-    srand(time(0));// Set random variable as current time
+    //srand(time(0));// Set random variable as current time
 
 	start(); //Start snake layout with initial values
 
