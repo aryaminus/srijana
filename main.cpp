@@ -644,8 +644,8 @@ void display(){
             DrawRules();
             break;
     }
-    glFlush();
-	glutSwapBuffers();
+    glFlush(); // Render now
+	glutSwapBuffers(); //Swap front- and back framebuffer
 }
 
 /* Callback handler for normal-key event */
@@ -692,29 +692,29 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
 	down= button==GLUT_LEFT_BUTTON && state==GLUT_LEFT;
 	if(down)
     {
-        if (key1==3)
+        if (key1==3) //welcome
         {
-            if(mx > (40) && mx < (60) && my > (10) && my < (15) )
+            if(mx > (40) && mx < (60) && my > (10) && my < (15) ) //exit button
             {
                 exit(0);
             }
-            if(mx > (40) && mx < (60) && my > (20) && my < (25) )
+            if(mx > (40) && mx < (60) && my > (20) && my < (25) ) //how_to
             {
                 glClear(GL_COLOR_BUFFER_BIT);
                 key1=4;
             }
-            if(mx > (40) && mx < (60) && my > (40) && my < (45) )
+            if(mx > (40) && mx < (60) && my > (40) && my < (45) ) //user
             {
                 key1 = 1;
                 display();
             }
-			if(mx > (40) && mx < (60) && my > (30) && my < (35) )
+			if(mx > (40) && mx < (60) && my > (30) && my < (35) ) //neural_play
             {
                 key1 = 2;
                 display();
             }
         }
-        if (key1==4)
+        if (key1==4) //back option in instruction
         {
             if(mx > (40) && mx < (60) && my > (5) && my < (10) )
             {
@@ -724,7 +724,7 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             }
         }
     }
-    glutMouseFunc(mouse);
+    glutMouseFunc(mouse); // Register callback handler for mouse event
 }
 
 void timer(int = 0){
