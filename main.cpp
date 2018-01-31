@@ -599,7 +599,7 @@ void welcome(){
 }
 
 void DrawNeural(){
-	glMatrixMode(GL_PROJECTION);
+
 	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
 
 	net -> init();
@@ -607,9 +607,10 @@ void DrawNeural(){
 	neural_check = true;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
+	//glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity ();
-	//gluPerspective(45.0, (float)wa/(float)ha, 0.1, 200.0);
+	gluPerspective(45.0, (float)SCREENW/(float)SCREENH, 0.1f, 200.0);
+	gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
 
 	glTranslatef(0.0, 0.0, -22.0);
 	int i;
@@ -748,6 +749,7 @@ void myReshape(int w, int h)
 		//glMatrixMode(GL_MODELVIEW); // To operate on Model-View matrix
 	}
 	if (key1 == 1 || key1 == 2){
+		glMatrixMode(GL_PROJECTION);
 		gluPerspective(45.0, (float)w/(float)h, 0.1f, 200.0);
 		gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
 		//glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
