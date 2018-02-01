@@ -18,6 +18,8 @@ int my;
 int food_x       =     -6;
 int food_y       =     -6;
 
+int SCREENH=450,SCREENW=450;
+
 typedef struct sq{
 	int x;
 	int y;
@@ -70,6 +72,9 @@ void set_f(){
 
 int main(int argc, char** argv){
     start();
-
     set_f();
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize (SCREENW,SCREENH);
 }
