@@ -77,4 +77,6 @@ int main(int argc, char** argv){
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize (SCREENW,SCREENH);
+    glutInitWindowPosition(500, 0);
+    glutCreateWindow("Srijana: User and Neural Network game");
 }
