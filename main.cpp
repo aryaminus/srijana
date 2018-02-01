@@ -757,7 +757,7 @@ int main(int argc, char** argv){
 
     set_f(); //Setup food point cordinates
 
-    glutInit(&argc, argv);                 // Initialize GLUT
+    glutInit(&argc, argv); // Initialize GLUT
 
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); // Use RGBA color, enable double buffering and enable depth buffer
     glutInitWindowSize (SCREENW,SCREENH);  // Set the window's initial width & height

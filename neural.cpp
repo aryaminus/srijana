@@ -41,6 +41,7 @@ class neural{
 };
 
 neural :: neural(){
+	//constructor
 }
 
 neural :: neural(int in, int out, int num, int hn, float lrate){
@@ -64,6 +65,7 @@ neural :: neural(int in, int out, int num, int hn, float lrate){
 		for(int e = 0; e < 1; e++) (layers[0].chr[i]).errors[e] = 0.0; // set 0.0 error initially
 	}
 
+	// Hidden layers to hn value
     for(int i = 1; i < num - 1; i++){
 		layers[i].chr = (node *)malloc(sizeof(node) * hn); //Memory Allocation for chr node of lay_i with hn value
 		layers[i].num_nodes = hn; //Set hn to num_nodes for each layer
@@ -140,7 +142,7 @@ float* neural :: feed(float *inputs){
 				(layers[i].chr[j]).inputs[0] = inputs[j]; //set lay_i.chr_j.inp[0] layer to input{j}
 				sum = (layers[i].chr[j]).weights[0] * inputs[j]; //Set sum to weight(0) * input(j)
 			}else{
-				//fo other layers
+				//for other layers
 				for(int k = 0; k < (layers[i].chr[j]).num_inputs; k++){
 					(layers[i].chr[j]).inputs[k] = inputs[k]; //set input(k)
 					sum += (layers[i].chr[j]).weights[k] * inputs[k]; //increment sum to sum + weight(k) * input(k)
