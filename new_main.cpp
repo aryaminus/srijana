@@ -15,6 +15,9 @@ using namespace std;
 int mx;
 int my;
 
+int food_x       =     -6;
+int food_y       =     -6;
+
 typedef struct sq{
 	int x;
 	int y;
@@ -46,6 +49,27 @@ void start(){
 	my = 0;
 }
 
+void set_f(){
+	bool f = true;
+	while(f){
+		srand(time(NULL));
+		food_x = (rand() % 34) - 17;
+		srand(time(NULL));
+		food_y = (rand() % 34) - 17;
+		sq *p = snake;
+		while(p != NULL){
+			if(p -> x == food_x && p -> y == food_y){
+				f = true;
+				break;
+			}
+			f = false;
+			p = p -> nexploration_ratet;
+		}
+	}
+}
+
 int main(int argc, char** argv){
     start();
+
+    set_f();
 }

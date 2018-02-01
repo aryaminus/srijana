@@ -103,7 +103,7 @@ void start(){
 	my = 0;
 }
 
-void set_f(){
+void set_f(){ //Setup food x,y cordinate and then make the snake p to move towards it's cordinate
 	bool f = true;
 	while(f){
 		srand(time(NULL));
