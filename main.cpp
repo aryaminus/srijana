@@ -154,11 +154,11 @@ float check(int x, int y){
 	sq *p = snake;
 	while(p != NULL){
 		if(p -> x == x && p -> y == y) //Check for each case until p's x,y is equal to x,y
-			return -1.0;
+			return -1.0; //return just 1 step form food
 		p = p -> nexploration_ratet;
 	}
 	if(x > 18 || x < -18 || y > 18 || y < -18) return -1.0; //Border Case Decrement
-	return 1.0;
+	return 1.0; //reached food
 }
 
 float *get_q(int sx, int sy){
@@ -235,6 +235,8 @@ float max_q(int sx, int sy, int food_x, int food_y){
 
 	float *out4 = get_q(sx1, sy1);
 
+
+	//Now all conditions for value increment is checked, now compare each outcome values
     if(out1[0] > out2[0]){
 		if(out1[0] > out3[0]){
 			if(out1[0] > out4[0]){
