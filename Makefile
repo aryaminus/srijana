@@ -5,5 +5,5 @@ run: main.o
 	g++ main.cpp -lGL -lglut -lGLU -o main
 	./main
 snake: main.o
-	g++ snake.cpp -lGL -lglut -lGLU -o snake
-	./snake
+	g++ new_main.cpp -lGL -lglut -lGLU -o new_main
+	./new_main
