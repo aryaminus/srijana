@@ -64,6 +64,7 @@ float old_q      =    0.0;
 //int wa,ha;
 
 int SCREENH=600,SCREENW=800;
+//int SCREENH=450,SCREENW=450;
 
 bool down=false;
 
