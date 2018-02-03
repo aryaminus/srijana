@@ -3,7 +3,7 @@ A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Ne
 
 **Currently in alpha state**
 
-[![Srijana features](https://i.imgur.com/6hHWMm7.gif)](https://github.com/aryaminus/srijana)
+[![Srijana features](https://i.imgur.com/tEFtibh.gif)](https://github.com/aryaminus/srijana)
 
 **Note:**
 Make sure you have opengl, freeglut3-dev & libgl1-mesa-dev 
@@ -37,9 +37,10 @@ For Codeblocks:
 ```
 
 ### TODO:
-- [ ] Fix gluPerspective from glOrtho when moving from welcome() to DrawNeural()
+- [x] Fix gluPerspective from glOrtho when moving from welcome() to DrawNeural()
 - [x] When clicked User/Play_Neural, resize is needed which needs to be fixed
 - [ ] Implementation of better algorithm than Q-learning
+- [x] Header to show score in window for DrawUser
 - [ ] Setup for Keyboard press to navigate snake
 
 ## Packages:
