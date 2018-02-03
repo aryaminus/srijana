@@ -92,22 +92,6 @@ struct
     int y;
 } s[100];
 
-class Fruct
-{
-public:
-    int x,y;
-    void New()
-    {
-        x = rand() % N;
-        y = rand() % (M-3);
-    }
-    void DrawFruct()
-    {
-        glColor3f (1.0, 1.0, 0.0);
-        glRectf (x*Scale, y*Scale, (x+1)*Scale, (y+1)*Scale);
-    }
-}m[2];
-
 void drawString(float x,float y,float z,void *font,char *string)
 {
 	char *c;
@@ -117,6 +101,12 @@ void drawString(float x,float y,float z,void *font,char *string)
 	{
 		glutBitmapCharacter(font, *c); //renders a bitmap character using OpenGL
 	}
+}
+
+void draw_string(void *font, const char* string)
+{
+    while(*string)
+        glutStrokeCharacter(font, *string++);
 }
 
 void add(int x, int y){
@@ -147,9 +137,9 @@ void set_f(){ //Setup food x,y cordinate and then make the snake p to move towar
 		food_x = (rand() % 34) - 17;
 		srand(time(NULL));
 		food_y = (rand() % 34) - 17;
-		sq *p = snake;
-		while(p != NULL){
-			if(p -> x == food_x && p -> y == food_y){
+		sq *p = snake; //take add(4,0) value
+		while(p != NULL){ //fetch null 
+			if(p -> x == food_x && p -> y == food_y){ //if value of p is same as food
 				f = true;
 				break;
 			}
@@ -520,15 +510,6 @@ void itera(){
 	old_q = new_q;
 }
 
-void fjfjfh()
-{
-    for(int i = 0; i < 2; i++)
-        m[i].New();
-
-    s[0].x = 25;
-    s[0].y = 15;
-}
-
 void par(float x1, float x2, float y1, float y2, float z1, float z2){
 	glColor3f(0.3,0.56,0.84); //Blue
 
@@ -671,21 +652,6 @@ void DrawNeural(){
 	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
 }
 
-void draw_string(void *font, const char* string)
-{
-    while(*string)
-        glutStrokeCharacter(font, *string++);
-}
-
-void DrawSnake()
-{
-    glColor3f (0.0,1.0,0.0);
-    for (int i = 0; i < num; i++)
-    {
-        glRectf (s[i].x*Scale, s[i].y*Scale, (s[i].x+1)*Scale, (s[i].y+1)*Scale);
-    }
-}
-
 void DrawScore()
 {
 	glLineWidth(1.5f);
@@ -742,11 +708,30 @@ void DrawUser(){
 	glVertex3f (1400.0, 700.0, 0.0);
 	glColor3f (0.0, 0.3, 0.0);
 	glVertex3f (1400.0, 800.0, 0.0);
+
 	glEnd();
+	/*
 	for( int i = 0; i < 2; i++)
         m[i].DrawFruct();
 	
-	DrawSnake();
+	DrawSnake();*/
+
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color buffer and depth buffer
+	glLoadIdentity ();
+	gluPerspective(45.0, (float)SCREENW/(float)SCREENH, 0.1f, 200.0);
+
+	glTranslatef(0.0, 0.0, -28.0); // Translate by -22 on z-axis
+	sq *p = snake;
+	par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
+	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
+	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
+	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
+	while(p != NULL){
+		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0); //decrement
+		p = p -> nexploration_ratet; //p reach null nexplorartion
+	}
+	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
+	
 	DrawScore();
 }
 
@@ -826,7 +811,6 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             if(mx > (40) && mx < (60) && my > (20) && my < (25) ) //how_to
             {
                 glClear(GL_COLOR_BUFFER_BIT);
-				fjfjfh();
                 key1=4;
 				display();
             }
@@ -835,7 +819,6 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
                 key1 = 1;
                 num = 5;
                 Score = 0;
-				fjfjfh();
                 display();
             }
 			if(mx > (40) && mx < (60) && my > (30) && my < (35) ) //neural_play
@@ -850,86 +833,11 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             {
                 key1=3;
                 glClear(GL_COLOR_BUFFER_BIT);
-				fjfjfh();
                 welcome();
             }
         }
     }
     glutMouseFunc(mouse); // Register callback handler for mouse event
-}
-
-void Tick()
-{
-    //Движение тела змейки:
-    for (int i = num; i > 0; --i)
-    {
-        s[i].x = s[i-1].x;
-        s[i].y = s[i-1].y;
-    }
-
-    //Движение головы змейки:
-    switch (dir) {
-        case 0:
-            s[0].y+=1;
-            break;
-        case 1:
-            s[0].x-=1;
-            break;
-        case 2:
-            s[0].x+=1;
-            break;
-        case 3:
-            s[0].y-=1;
-            break;
-    }
-    int h=0;
-    // Если наехали на фрукт, змейка увеличивается:
-    for (int i = 0; i < 5; i++)
-        if ( (s[0].x == m[i].x) && (s[0].y == m[i].y) )
-        {
-            num++;
-            m[i].New();
-            if(h!=11){
-                h++;
-            }
-            else{
-                h=0;
-            }
-            Score+=2;
-        }
-
-    // Если наехали на бомбу, сокращается ее длина:
-    /*
-	for (int i = 0; i < 10; i++)
-        if ( (s[0].x == u[i].x) && (s[0].y == u[i].y) )
-        {
-            if (num == 2) key1=2;
-            if (num > 3)
-                num = num - 2;
-            else
-                num = 2;
-            u[i].New();
-            if (Score > 0)
-                Score--;
-            if (Score <  0)
-                Score =0;
-        }
-	*/
-    // Если вышли за границы, конец игры:
-    /*if (s[0].x > N || s[0].x < 0 || s[0].y > (M-3) || s[0].y < 0)
-    {
-        key1=2;
-    }*/
-
-    // Если змейка наехала сама на себя, сокращается ее длина:
-    for (int i = 1; i < num; i++)
-        if (s[0].x == s[i].x && s[0].y == s[i].y ){
-            num = 3;
-            if (Score > 0)
-                Score-=3;
-            if (Score < 0)
-                Score = 0;
-        }
 }
 
 void timer(int = 0){
@@ -939,7 +847,6 @@ void timer(int = 0){
 	}
 	if (key1==1)
 		DrawUser();
-	Tick();
 	glutPostRedisplay(); //marks the current window as needing to be redisplayed
 	glutTimerFunc(80, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
