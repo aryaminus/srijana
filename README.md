@@ -41,7 +41,7 @@ For Codeblocks:
 - [x] When clicked User/Play_Neural, resize is needed which needs to be fixed
 - [ ] Implementation of better algorithm than Q-learning
 - [x] Header to show score in window for DrawUser
-- [ ] Setup for Keyboard press to navigate snake
+- [x] Setup for Keyboard press to navigate snake
 
 ## Packages:
 1. <a href="https://github.com/Shanta-chan/Snake" target="_blank">snake</a>

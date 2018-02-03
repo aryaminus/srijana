@@ -864,19 +864,19 @@ void display(){
 /* Callback handler for normal-key event */
 void keyboard(unsigned char key, int a, int b) {
 	switch (key) {
-        case 101:   // вверх
+        case 'w': 
             dir = 0;
             break;
-        case 102:   // направо
+        case 'd':
             dir = 2;
             break;
-        case 100:   // налево
+        case 'a':
             dir = 1;
             break;
-        case 103:   // вниз
+        case 's':
             dir = 3;
             break;
-        case 27:    // Escape
+        case 27:
             exit(0);
             break;
     }
