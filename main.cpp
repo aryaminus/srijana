@@ -79,6 +79,10 @@ int N = 50,M = 30;
 
 int num = 7;
 
+char sScore[15];
+int Score = 0;
+char sHightScore[15];
+
 struct
 {
     int x;
@@ -167,6 +171,11 @@ void init(){
 
 	GLfloat acolor[] = {1.4, 1.4, 1.4, 1.0};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);*/
+
+	glClearColor(0.0, 0.18, 0.0, 0);
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D (0, SCREENW, 0, SCREENH);
 }
 
 bool check_body(int x, int y){
@@ -650,6 +659,12 @@ void DrawNeural(){
 	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
 }
 
+void draw_string(void *font, const char* string)
+{
+    while(*string)
+        glutStrokeCharacter(font, *string++);
+}
+
 void DrawUser(){
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glLoadIdentity ();
@@ -671,6 +686,33 @@ void DrawUser(){
     {
         glRectf (s[i].x*Scale, s[i].y*Scale, (s[i].x+1)*Scale, (s[i].y+1)*Scale);
     }
+	    glLineWidth(1.5f);
+    glColor3f (1.1,1.0,1.0);
+
+    glPushMatrix();
+    glTranslatef(SCREENW/(5.4), SCREENH/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, "Your score:");
+    glPopMatrix();
+    sprintf(sScore, "%9d", Score);
+    glPushMatrix();
+    glTranslatef(SCREENW/(5), SCREENH/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, sScore);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(SCREENW/(1.6), SCREENH/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, "Hide score:");
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(SCREENW/(1.2), SCREENH/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, sHightScore);
+    glPopMatrix();
+
+    glFinish();
+    glutSwapBuffers();
 }
 
 void display(){
@@ -816,7 +858,7 @@ int main(int argc, char** argv){
     glutInitWindowPosition(500, 0); // Position the window's initial top-left corner
     glutCreateWindow("Srijana: User and Neural Network game"); // Create a window with the given title
 
-    //init();
+    init();
 
 	glutTimerFunc (400,timer,0);     // First timer call immediately
 	glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
