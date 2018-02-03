@@ -84,6 +84,7 @@ int num = 7;
 char sScore[15];
 int Score = 0;
 char sHightScore[15];
+int hightScore;
 
 struct
 {
@@ -519,6 +520,15 @@ void itera(){
 	old_q = new_q;
 }
 
+void fjfjfh()
+{
+    for(int i = 0; i < 2; i++)
+        m[i].New();
+
+    s[0].x = 25;
+    s[0].y = 15;
+}
+
 void par(float x1, float x2, float y1, float y2, float z1, float z2){
 	glColor3f(0.3,0.56,0.84); //Blue
 
@@ -667,32 +677,18 @@ void draw_string(void *font, const char* string)
         glutStrokeCharacter(font, *string++);
 }
 
-void DrawUser(){
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glLoadIdentity ();
-	glClearColor(0.0, 0.18, 0.0, 0);
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D (0, SCREENW, 0, SCREENH);
-	glMatrixMode(GL_PROJECTION);
-	glBegin(GL_POLYGON);
-	glColor3f (0.0, 0.3, 0.0);
-	glVertex3f (0.0, 800.0, 0.0);
-	glColor3f (0.0, 0.11, 0.0);
-	glVertex3f (0, 700.0, 0.0);
-	glColor3f (0.0, 0.11, 0.0);
-	glVertex3f (1400.0, 700.0, 0.0);
-	glColor3f (0.0, 0.3, 0.0);
-	glVertex3f (1400.0, 800.0, 0.0);
-	glEnd();
-	for( int i = 0; i < 2; i++)
-        m[i].DrawFruct();
-	glColor3f (0.0,1.0,0.0);
+void DrawSnake()
+{
+    glColor3f (0.0,1.0,0.0);
     for (int i = 0; i < num; i++)
     {
         glRectf (s[i].x*Scale, s[i].y*Scale, (s[i].x+1)*Scale, (s[i].y+1)*Scale);
     }
-	    glLineWidth(1.5f);
+}
+
+void DrawScore()
+{
+	glLineWidth(1.5f);
     glColor3f (1.1,1.0,1.0);
 
     glPushMatrix();
@@ -706,6 +702,13 @@ void DrawUser(){
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, sScore);
     glPopMatrix();
+
+    ifstream inFile("Snake.bin",ios_base::binary);
+    while(inFile.peek()!=EOF)
+        inFile >> sHightScore;
+    inFile.close();
+    hightScore = atoi(sHightScore);
+
     glPushMatrix();
     glTranslatef(SCREENW/(1.6), SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
@@ -718,7 +721,33 @@ void DrawUser(){
     glPopMatrix();
 
     glFinish();
-    glutSwapBuffers();
+    //glutSwapBuffers();
+}
+
+void DrawUser(){
+	
+	//glLoadIdentity ();
+	glClearColor(0.0, 0.18, 0.0, 0);
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D (0, SCREENW, 0, SCREENH);
+	//glMatrixMode(GL_PROJECTION);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glBegin(GL_POLYGON);
+	glColor3f (0.0, 0.3, 0.0);
+	glVertex3f (0.0, 800.0, 0.0);
+	glColor3f (0.0, 0.11, 0.0);
+	glVertex3f (0, 700.0, 0.0);
+	glColor3f (0.0, 0.11, 0.0);
+	glVertex3f (1400.0, 700.0, 0.0);
+	glColor3f (0.0, 0.3, 0.0);
+	glVertex3f (1400.0, 800.0, 0.0);
+	glEnd();
+	for( int i = 0; i < 2; i++)
+        m[i].DrawFruct();
+	
+	DrawSnake();
+	DrawScore();
 }
 
 void display(){
@@ -745,8 +774,8 @@ void display(){
 }
 
 /* Callback handler for normal-key event */
-void keyboard(unsigned char key, int x, int y) {
-	    switch (key) {
+void keyboard(unsigned char key, int a, int b) {
+	switch (key) {
         case 101:   // вверх
             dir = 0;
             break;
@@ -784,6 +813,7 @@ void keyboard(unsigned char key, int x, int y) {
 void mouse(int button, int state, int ax, int ay)            // takes input from mouse
 {
 	int mx=ax*100/SCREENW,my=(SCREENH-ay)*100/SCREENH;		// m = mouse cordinate to graphics
+	
 	down= button==GLUT_LEFT_BUTTON && state==GLUT_LEFT;
 	if(down)
     {
@@ -796,11 +826,16 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             if(mx > (40) && mx < (60) && my > (20) && my < (25) ) //how_to
             {
                 glClear(GL_COLOR_BUFFER_BIT);
+				fjfjfh();
                 key1=4;
+				display();
             }
             if(mx > (40) && mx < (60) && my > (40) && my < (45) ) //user
             {
                 key1 = 1;
+                num = 5;
+                Score = 0;
+				fjfjfh();
                 display();
             }
 			if(mx > (40) && mx < (60) && my > (30) && my < (35) ) //neural_play
@@ -815,6 +850,7 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
             {
                 key1=3;
                 glClear(GL_COLOR_BUFFER_BIT);
+				fjfjfh();
                 welcome();
             }
         }
@@ -880,10 +916,10 @@ void Tick()
         }
 	*/
     // Если вышли за границы, конец игры:
-    if (s[0].x > N || s[0].x < 0 || s[0].y > (M-3) || s[0].y < 0)
+    /*if (s[0].x > N || s[0].x < 0 || s[0].y > (M-3) || s[0].y < 0)
     {
         key1=2;
-    }
+    }*/
 
     // Если змейка наехала сама на себя, сокращается ее длина:
     for (int i = 1; i < num; i++)
@@ -901,9 +937,11 @@ void timer(int = 0){
 		itera();
 		cout << "iterations : " << iterations << " score : " << sc << endl;
 	}
+	if (key1==1)
+		DrawUser();
 	Tick();
 	glutPostRedisplay(); //marks the current window as needing to be redisplayed
-	glutTimerFunc(50, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
+	glutTimerFunc(80, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
 
 void myReshape(int w, int h)
@@ -941,7 +979,7 @@ int main(int argc, char** argv){
 
     init();
 
-	glutTimerFunc (400,timer,0);     // First timer call immediately
+	glutTimerFunc (80,timer,0);     // First timer call immediately
 	glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
     glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
 	glutMouseFunc(mouse);   // Register callback handler for mouse event
