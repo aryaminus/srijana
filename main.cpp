@@ -63,7 +63,7 @@ float old_q      =    0.0;
 
 //int wa,ha;
 
-int SCREENH=600,SCREENW=800;
+int SCREENH=(25*30),SCREENW=(25*50);
 //int SCREENH=450,SCREENW=450;
 
 bool down=false;
@@ -71,6 +71,35 @@ bool down=false;
 int key1 = 3;
 
 bool neural_check = false;
+
+int dir;
+
+int Scale = 25;
+int N = 50,M = 30;
+
+int num = 7;
+
+struct
+{
+    int x;
+    int y;
+} s[100];
+
+class Fruct
+{
+public:
+    int x,y;
+    void New()
+    {
+        x = rand() % N;
+        y = rand() % (M-3);
+    }
+    void DrawFruct()
+    {
+        glColor3f (1.0, 1.0, 0.0);
+        glRectf (x*Scale, y*Scale, (x+1)*Scale, (y+1)*Scale);
+    }
+}m[2];
 
 void drawString(float x,float y,float z,void *font,char *string)
 {
@@ -621,6 +650,29 @@ void DrawNeural(){
 	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
 }
 
+void DrawUser(){
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glLoadIdentity ();
+	glMatrixMode(GL_PROJECTION);
+	glBegin(GL_POLYGON);
+	glColor3f (0.0, 0.3, 0.0);
+	glVertex3f (0.0, 800.0, 0.0);
+	glColor3f (0.0, 0.11, 0.0);
+	glVertex3f (0, 700.0, 0.0);
+	glColor3f (0.0, 0.11, 0.0);
+	glVertex3f (1400.0, 700.0, 0.0);
+	glColor3f (0.0, 0.3, 0.0);
+	glVertex3f (1400.0, 800.0, 0.0);
+	glEnd();
+	for( int i = 0; i < 2; i++)
+        m[i].DrawFruct();
+	glColor3f (0.0,1.0,0.0);
+    for (int i = 0; i < num; i++)
+    {
+        glRectf (s[i].x*Scale, s[i].y*Scale, (s[i].x+1)*Scale, (s[i].y+1)*Scale);
+    }
+}
+
 void display(){
 	//glMatrixMode(GL_PROJECTION);
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -628,7 +680,7 @@ void display(){
 	switch (key1)
     {
         case 1:
-            DrawNeural();
+            DrawUser();
             break;
         case 2:
             DrawNeural();
@@ -646,7 +698,6 @@ void display(){
 
 /* Callback handler for normal-key event */
 void keyboard(unsigned char key, int x, int y) {
-	/*
 	    switch (key) {
         case 101:   // вверх
             dir = 0;
@@ -663,7 +714,7 @@ void keyboard(unsigned char key, int x, int y) {
         case 27:    // Escape
             exit(0);
             break;
-    }*/
+    }
 	/*if((char)key == 'p'){
 		if(pus) pus = false;
 		else pus = true;
@@ -738,11 +789,11 @@ void myReshape(int w, int h)
 	// Set the aspect ratio of the clipping area to match the viewport
     glMatrixMode(GL_PROJECTION); // To operate on the Projection matrix
 	glLoadIdentity(); // Reset the model-view matrix
-	if (key1 == 3){
+	if (key1 == 3 || key1 == 1){
 		glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
 		//glMatrixMode(GL_MODELVIEW); // To operate on Model-View matrix
 	}
-	if (key1 == 1 || key1 == 2){
+	if (key1 == 2){
 		glMatrixMode(GL_PROJECTION);
 		gluPerspective(45.0, (float)w/(float)h, 0.1f, 200.0);
 		gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
