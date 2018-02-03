@@ -424,6 +424,109 @@ float reward(int sx, int sy, int sx1, int sy1){
 	return -re2;
 }
 
+void Tick(){
+	/*switch (dir) {
+        case 0:
+            s[0].y+=1;
+            break;
+        case 1:
+            s[0].x-=1;
+            break;
+        case 2:
+            s[0].x+=1;
+            break;
+        case 3:
+            s[0].y-=1;
+            break;
+    }*/
+	iterations++; //Increment iterations
+    int sx = snake -> x;
+	int sy = snake -> y;
+
+	float inputs[6];
+	int sx1 = sx;
+	int sy1 = sy;
+
+	float new_q;
+
+    //Движение головы змейки:
+    switch (dir) {
+        case 0:
+            //s[0].y+=1;
+            sx1 = sx;
+			sy1 = sy + 1;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(my == -1) rev();
+			else{
+				mx =  0;
+				my =  1;
+			}
+            break;
+        case 1:
+            //s[0].x-=1;
+            sx1 = sx - 1;
+			sy1 = sy;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(mx == 1) rev();
+			else{
+				mx = -1;
+				my =  0;
+			}
+            break;
+        case 2:
+            //s[0].x+=1;
+            sx1 = sx + 1;
+			sy1 = sy;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(mx == -1) rev();
+			else{
+				mx =  1;
+				my =  0;
+			}
+            break;
+        case 3:
+            //s[0].y-=1;
+            sx1 = sx;
+			sy1 = sy - 1;
+			if(check_body(sx1, sy1)){
+				sq *last = get_last();
+				sx1 = last -> x - last -> mx;
+				sy1 = last -> y - last -> my;
+			}
+			if(my == 1) rev();
+			else{
+				mx =  0;
+				my = -1;
+			}
+            break;
+    }
+    //float *out1 = get_q(sx1, sy1);
+	//new_q = out1[0];
+	//get_q(sx1, sy1);
+    move();
+
+    sx1 = snake -> x;
+	sy1 = snake -> y;
+
+    //float dout[1];
+	float re = reward(sx, sy, sx1, sy1);
+
+	//dout[0] =  re + 0.9 * new_q - old_q;
+	//old_q = new_q;
+}
+
 void itera(){
 	iterations++; //Increment iterations
 	int sx = snake -> x;
@@ -846,7 +949,7 @@ void timer(int = 0){
 		cout << "iterations : " << iterations << " score : " << sc << endl;
 	}
 	if (key1==1)
-		DrawUser();
+		Tick();
 	glutPostRedisplay(); //marks the current window as needing to be redisplayed
 	glutTimerFunc(80, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
