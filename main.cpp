@@ -63,7 +63,7 @@ float old_q      =    0.0;
 
 //int wa,ha;
 
-int SCREENH=(25*30),SCREENW=(25*50);
+//int SCREENH=(25*30),SCREENW=(25*50);
 //int SCREENH=450,SCREENW=450;
 
 bool down=false;
@@ -76,6 +76,8 @@ int dir;
 
 int Scale = 25;
 int N = 50,M = 30;
+int SCREENW = Scale * N;
+int SCREENH = Scale * M;
 
 int num = 7;
 
@@ -666,8 +668,12 @@ void draw_string(void *font, const char* string)
 }
 
 void DrawUser(){
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glLoadIdentity ();
+	glClearColor(0.0, 0.18, 0.0, 0);
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D (0, SCREENW, 0, SCREENH);
 	glMatrixMode(GL_PROJECTION);
 	glBegin(GL_POLYGON);
 	glColor3f (0.0, 0.3, 0.0);
@@ -816,11 +822,86 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
     glutMouseFunc(mouse); // Register callback handler for mouse event
 }
 
+void Tick()
+{
+    //Движение тела змейки:
+    for (int i = num; i > 0; --i)
+    {
+        s[i].x = s[i-1].x;
+        s[i].y = s[i-1].y;
+    }
+
+    //Движение головы змейки:
+    switch (dir) {
+        case 0:
+            s[0].y+=1;
+            break;
+        case 1:
+            s[0].x-=1;
+            break;
+        case 2:
+            s[0].x+=1;
+            break;
+        case 3:
+            s[0].y-=1;
+            break;
+    }
+    int h=0;
+    // Если наехали на фрукт, змейка увеличивается:
+    for (int i = 0; i < 5; i++)
+        if ( (s[0].x == m[i].x) && (s[0].y == m[i].y) )
+        {
+            num++;
+            m[i].New();
+            if(h!=11){
+                h++;
+            }
+            else{
+                h=0;
+            }
+            Score+=2;
+        }
+
+    // Если наехали на бомбу, сокращается ее длина:
+    /*
+	for (int i = 0; i < 10; i++)
+        if ( (s[0].x == u[i].x) && (s[0].y == u[i].y) )
+        {
+            if (num == 2) key1=2;
+            if (num > 3)
+                num = num - 2;
+            else
+                num = 2;
+            u[i].New();
+            if (Score > 0)
+                Score--;
+            if (Score <  0)
+                Score =0;
+        }
+	*/
+    // Если вышли за границы, конец игры:
+    if (s[0].x > N || s[0].x < 0 || s[0].y > (M-3) || s[0].y < 0)
+    {
+        key1=2;
+    }
+
+    // Если змейка наехала сама на себя, сокращается ее длина:
+    for (int i = 1; i < num; i++)
+        if (s[0].x == s[i].x && s[0].y == s[i].y ){
+            num = 3;
+            if (Score > 0)
+                Score-=3;
+            if (Score < 0)
+                Score = 0;
+        }
+}
+
 void timer(int = 0){
 	if (neural_check){ //only when neural_check is true
 		itera();
 		cout << "iterations : " << iterations << " score : " << sc << endl;
 	}
+	Tick();
 	glutPostRedisplay(); //marks the current window as needing to be redisplayed
 	glutTimerFunc(50, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
@@ -853,7 +934,7 @@ int main(int argc, char** argv){
 
     glutInit(&argc, argv); // Initialize GLUT
 
-    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); // Use RGBA color, enable double buffering and enable depth buffer
+    glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH); // Use RGBA color, enable double buffering and enable depth buffer
     glutInitWindowSize (SCREENW,SCREENH);  // Set the window's initial width & height
     glutInitWindowPosition(500, 0); // Position the window's initial top-left corner
     glutCreateWindow("Srijana: User and Neural Network game"); // Create a window with the given title
