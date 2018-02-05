@@ -520,7 +520,7 @@ void Tick(){
     sx1 = snake -> x;
 	sy1 = snake -> y;
 
-    //float dout[1];
+   // float dout[1];
 	float re = reward(sx, sy, sx1, sy1);
 
 	//dout[0] =  re + 0.9 * new_q - old_q;
@@ -765,20 +765,15 @@ void DrawScore()
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, "Your score:");
     glPopMatrix();
-    sprintf(sScore, "%9d", Score);
+    sprintf(sScore, "%9d", sc);
     glPushMatrix();
     glTranslatef(SCREENW/(5), SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, sScore);
     glPopMatrix();
 
-    ifstream inFile("Snake.bin",ios_base::binary);
-    while(inFile.peek()!=EOF)
-        inFile >> sHightScore;
-    inFile.close();
-    hightScore = atoi(sHightScore);
 
-    glPushMatrix();
+    /*glPushMatrix();
     glTranslatef(SCREENW/(1.6), SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, "Hide score:");
@@ -787,7 +782,7 @@ void DrawScore()
     glTranslatef(SCREENW/(1.2), SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, sHightScore);
-    glPopMatrix();
+    glPopMatrix();*/
 
     glFinish();
     //glutSwapBuffers();
@@ -813,6 +808,7 @@ void DrawUser(){
 	glVertex3f (1400.0, 800.0, 0.0);
 
 	glEnd();
+	DrawScore();
 	/*
 	for( int i = 0; i < 2; i++)
         m[i].DrawFruct();
@@ -834,8 +830,6 @@ void DrawUser(){
 		p = p -> nexploration_ratet; //p reach null nexplorartion
 	}
 	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
-	
-	DrawScore();
 }
 
 void display(){
