@@ -83,6 +83,8 @@ int num = 7;
 
 char sScore[15];
 int Score = 0;
+char sHightScore[15];
+int hightScore;
 
 struct
 {
@@ -149,7 +151,24 @@ void set_f(){ //Setup food x,y cordinate and then make the snake p to move towar
 
 /* Initialize OpenGL Graphics */
 void init(){
+	/*
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+	glLoadIdentity ();
+	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+
+	GLfloat acolor[] = {1.4, 1.4, 1.4, 1.0};
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, acolor);*/
+
+	glClearColor(0.0, 0.18, 0.0, 0);
 	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D (0, SCREENW, 0, SCREENH);
 }
 
 bool check_body(int x, int y){
@@ -379,21 +398,17 @@ bool tail(){
 
 float reward(int sx, int sy, int sx1, int sy1){
 	if(snake -> x == food_x && snake -> y == food_y){
-		if (neural_check){
-			fail_count = 0;
-			exploration_rate = exploration_rate / 3; //Rate decrement by 1/3 from 40%
-		}
-		add(food_x, food_y);//Add value to tail with additional quad
-		set_f();
+		add(food_x, food_y);//Show food
+		fail_count = 0;
 		sc++; //Increment sc by 1
+		exploration_rate = exploration_rate / 3; //Rate decrement by 1/3 from 40%
+		set_f();
 		return 1000.0;
 	}else if(tail()){
-			if (neural_check){
-				fail_count = 0;
-				fail_count++;
-		}
+		fail_count = 0;
 		sc = 0;
 		start(); //restart
+		fail_count++;
 		return -100000.0;
 	}else if(snake -> x > 18 || snake -> x < -18 || snake -> y > 18 || snake -> y < -18){
 		//border hit
@@ -410,14 +425,31 @@ float reward(int sx, int sy, int sx1, int sy1){
 }
 
 void Tick(){
+	/*switch (dir) {
+        case 0:
+            s[0].y+=1;
+            break;
+        case 1:
+            s[0].x-=1;
+            break;
+        case 2:
+            s[0].x+=1;
+            break;
+        case 3:
+            s[0].y-=1;
+            break;
+    }*/
 	iterations++; //Increment iterations
     int sx = snake -> x;
 	int sy = snake -> y;
 
+	float inputs[6];
 	int sx1 = sx;
 	int sy1 = sy;
 
-    //Snake head movement:
+	float new_q;
+
+    //Движение головы змейки:
     switch (dir) {
         case 0:
             //s[0].y+=1;
@@ -435,6 +467,7 @@ void Tick(){
 			}
             break;
         case 1:
+            //s[0].x-=1;
             sx1 = sx - 1;
 			sy1 = sy;
 			if(check_body(sx1, sy1)){
@@ -449,6 +482,7 @@ void Tick(){
 			}
             break;
         case 2:
+            //s[0].x+=1;
             sx1 = sx + 1;
 			sy1 = sy;
 			if(check_body(sx1, sy1)){
@@ -463,6 +497,7 @@ void Tick(){
 			}
             break;
         case 3:
+            //s[0].y-=1;
             sx1 = sx;
 			sy1 = sy - 1;
 			if(check_body(sx1, sy1)){
@@ -477,7 +512,9 @@ void Tick(){
 			}
             break;
     }
-
+    //float *out1 = get_q(sx1, sy1);
+	//new_q = out1[0];
+	//get_q(sx1, sy1);
     move();
 
     sx1 = snake -> x;
