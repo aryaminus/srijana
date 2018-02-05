@@ -420,7 +420,6 @@ void Tick(){
     //Snake head movement:
     switch (dir) {
         case 0:
-            //s[0].y+=1;
             sx1 = sx;
 			sy1 = sy + 1;
 			if(check_body(sx1, sy1)){
@@ -483,11 +482,7 @@ void Tick(){
     sx1 = snake -> x;
 	sy1 = snake -> y;
 
-   // float dout[1];
 	float re = reward(sx, sy, sx1, sy1);
-
-	//dout[0] =  re + 0.9 * new_q - old_q;
-	//old_q = new_q;
 }
 
 void itera(){
@@ -618,18 +613,18 @@ void DrawRules(){
 		drawString(46,6,0,GLUT_BITMAP_TIMES_ROMAN_24,"BACK");
 
 		glColor3f(0.137,0.137,0.556);
-		drawString(37,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY");
-		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"- Choose any one of the options:");
-		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"    Menu:");
-		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- User: Currently to Neural");
+		drawString(42,75,0,GLUT_BITMAP_TIMES_ROMAN_24,"HOW TO PLAY:");
+		drawString(23,69,0,GLUT_BITMAP_HELVETICA_18,"Choose any one of the options:");
+		drawString(23,65,0,GLUT_BITMAP_HELVETICA_18,"Menu:");
+		drawString(23,61,0,GLUT_BITMAP_HELVETICA_18,"- User: Use AWSD to move snake and add quad with food");
 		drawString(23,57,0,GLUT_BITMAP_HELVETICA_18,"- Play_neural: Sends neural Data");
 		drawString(23,53,0,GLUT_BITMAP_HELVETICA_18,"- How_to: reaches this screen");
-		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"  Exit: Forwards: exit(0)");
-		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- The game initializes net neural with default values");
-		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"  then sets up 1-4 polygons for head & tail of snake");
-		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"- As the values and timer is setup the par is setup ");
-		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"  for border and with iteration the snake forwards to food");
-		drawString(33,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
+		drawString(23,49,0,GLUT_BITMAP_HELVETICA_18,"- Exit: Forwards: exit(0)");
+		drawString(23,45,0,GLUT_BITMAP_HELVETICA_18,"- The game sets up 1-4 polygons for head & tail of snake ");
+		drawString(23,41,0,GLUT_BITMAP_HELVETICA_18,"  Neural;initializes net neural with default values");
+		drawString(23,37,0,GLUT_BITMAP_HELVETICA_18,"  User;takes kbhit to fetch values ");
+		drawString(23,33,0,GLUT_BITMAP_HELVETICA_18,"  Food comes in random and if snake hits it's body or border:restart");
+		drawString(38,27,0,GLUT_BITMAP_HELVETICA_18," ENJOY PLAYING THE GAME");
 
 		glutPostRedisplay(); //marks the current window as needing to be redisplayed
 }
@@ -662,7 +657,7 @@ void welcome(){
 	glColor3f(0.8,0.8,0.8);
 	glRectf(40,30,60,35);
 	glColor3f(0.137,0.137,0.556);
-	drawString(41,31,0,GLUT_BITMAP_HELVETICA_18,"NN_PLAY");
+	drawString(46,31,0,GLUT_BITMAP_HELVETICA_18,"NEURAL");
 
 	// button 3 .. How_to
 	glColor3f(0.196,0.196,0.8);
@@ -671,7 +666,7 @@ void welcome(){
 	glColor3f(0.8,0.8,0.8);
 	glRectf(40,20,60,25);
 	glColor3f(0.137,0.137,0.556);
-	drawString(46,21,0,GLUT_BITMAP_HELVETICA_18,"HOW?");
+	drawString(47,21,0,GLUT_BITMAP_HELVETICA_18,"HOW?");
 
 	// button 4 .. exit
 	glColor3f(0.196,0.196,0.8);
@@ -685,37 +680,11 @@ void welcome(){
 	glPushMatrix(); // Save model-view matrix setting
 
 	glColor3f(0.8,0.8,0.8);
-	drawString(25.5,92,0,GLUT_BITMAP_TIMES_ROMAN_24,"GRAPHICS PROJECT ");
-	drawString(35.5,80,0,GLUT_BITMAP_TIMES_ROMAN_24,"SRIJANA");
+	drawString(40,92,0,GLUT_BITMAP_TIMES_ROMAN_24,"GRAPHICS PROJECT ");
+	drawString(23,80,0,GLUT_BITMAP_TIMES_ROMAN_24,"Srijana: OpenGL based 2D Snake to play as user and neural network");
 	glPopMatrix();
 	glColor3f(0.137,0.137,0.556);
 
-}
-
-void DrawNeural(){
-
-	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
-
-	net -> init(); //reach neural_init
-
-	neural_check = true;
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color buffer and depth buffer
-	glLoadIdentity ();
-	gluPerspective(45.0, (float)SCREENW/(float)SCREENH, 0.1f, 200.0);
-	//gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
-
-	glTranslatef(0.0, 0.0, -22.0); // Translate by -22 on z-axis
-	sq *p = snake;
-	par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
-	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
-	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
-	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
-	while(p != NULL){
-		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0); //decrement
-		p = p -> nexploration_ratet; //p reach null nexplorartion
-	}
-	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
 }
 
 void DrawScore()
@@ -724,42 +693,29 @@ void DrawScore()
     glColor3f (1.1,1.0,1.0);
 
     glPushMatrix();
-    glTranslatef(SCREENW/(5.4), SCREENH/(1.05), 0);
+    glTranslatef(SCREENW/(2.8), SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, "Your score:");
     glPopMatrix();
+
     sprintf(sScore, "%9d", sc);
+
     glPushMatrix();
-    glTranslatef(SCREENW/(5), SCREENH/(1.05), 0);
+    glTranslatef(SCREENW/2.4, SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, sScore);
     glPopMatrix();
 
-
-    /*glPushMatrix();
-    glTranslatef(SCREENW/(1.6), SCREENH/(1.05), 0);
-    glScalef(0.3f, 0.3f, 0.3f);
-    draw_string(GLUT_STROKE_ROMAN, "Hide score:");
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(SCREENW/(1.2), SCREENH/(1.05), 0);
-    glScalef(0.3f, 0.3f, 0.3f);
-    draw_string(GLUT_STROKE_ROMAN, sHightScore);
-    glPopMatrix();*/
-
     glFinish();
-    //glutSwapBuffers();
 }
 
-void DrawUser(){
-	
-	//glLoadIdentity ();
-	glClearColor(0.0, 0.18, 0.0, 0);
-	glMatrixMode (GL_PROJECTION);
+void DrawNeural(){
+
+	glClearColor(0.0, 0.18, 0.0, 0); //BG-color
 	glLoadIdentity();
 	gluOrtho2D (0, SCREENW, 0, SCREENH);
-	//glMatrixMode(GL_PROJECTION);
 	glClear(GL_COLOR_BUFFER_BIT);
+
 	glBegin(GL_POLYGON);
 	glColor3f (0.0, 0.3, 0.0);
 	glVertex3f (0.0, 800.0, 0.0);
@@ -771,16 +727,19 @@ void DrawUser(){
 	glVertex3f (1400.0, 800.0, 0.0);
 
 	glEnd();
+
 	DrawScore();
-	/*
-	for( int i = 0; i < 2; i++)
-        m[i].DrawFruct();
-	
-	DrawSnake();*/
+
+	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
+
+	net -> init(); //reach neural_init
+
+	neural_check = true;
 
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color buffer and depth buffer
 	glLoadIdentity ();
 	gluPerspective(45.0, (float)SCREENW/(float)SCREENH, 0.1f, 200.0);
+	//gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
 
 	glTranslatef(0.0, 0.0, -28.0); // Translate by -22 on z-axis
 	sq *p = snake;
@@ -795,9 +754,45 @@ void DrawUser(){
 	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
 }
 
+void DrawUser(){
+	
+	glClearColor(0.0, 0.18, 0.0, 0); //BG-color
+	glLoadIdentity();
+	gluOrtho2D (0, SCREENW, 0, SCREENH);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glBegin(GL_POLYGON);
+	glColor3f (0.0, 0.3, 0.0);
+	glVertex3f (0.0, 800.0, 0.0);
+	glColor3f (0.0, 0.11, 0.0);
+	glVertex3f (0, 700.0, 0.0);
+	glColor3f (0.0, 0.11, 0.0);
+	glVertex3f (1400.0, 700.0, 0.0);
+	glColor3f (0.0, 0.3, 0.0);
+	glVertex3f (1400.0, 800.0, 0.0);
+
+	glEnd();
+
+	DrawScore();
+	
+	glLoadIdentity ();
+	gluPerspective(45.0, (float)SCREENW/(float)SCREENH, 0.1f, 200.0);
+	glTranslatef(0.0, 0.0, -28.0); // Translate by -22 on z-axis
+	
+	sq *p = snake;
+	par(-8.7,  9.2,  9.0,  9.2, 0.0, 0.0);
+	par(-8.7,  9.2, -8.5, -8.7, 0.0, 0.0);
+	par(-8.5, -8.7, -8.7,  9.2, 0.0, 0.0);
+	par( 9.2,  9.0, -8.7,  9.2, 0.0, 0.0);
+
+	while(p != NULL){
+		par((p -> x)/2.0,(p -> x)/2.0 + 0.4,(p -> y)/2.0,(p -> y)/2.0 + 0.4, 0.0, 0.0); //decrement
+		p = p -> nexploration_ratet; //p reach null nexplorartion
+	}
+	par(food_x/2.0, food_x/2.0 + 0.4 , food_y/2.0 , food_y/2.0 + 0.4, 0.0 , 0.0); //food decrement
+}
+
 void display(){
-	//glMatrixMode(GL_PROJECTION);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	switch (key1)
     {
@@ -837,22 +832,6 @@ void keyboard(unsigned char key, int a, int b) {
             exit(0);
             break;
     }
-	/*if((char)key == 'p'){
-		if(pus) pus = false;
-		else pus = true;
-	}else if((char)key == 't'){
-		tmp--;
-	}else if((char)key == 'y'){
-		if(tmp < 0) tmp = 0;
-		tmp++;
-	}else if((char)key == 's'){
-		set_f();
-	}else if((char)key == 'q'){
-		cout << "-- SKIPING 500 STEPS --" << endl;
-		pus = true;
-		for(int i = 0; i < 500; i++) itera();
-		pus = false;
-	}*/
 }
 
 void mouse(int button, int state, int ax, int ay)            // takes input from mouse
@@ -917,16 +896,10 @@ void myReshape(int w, int h)
 	// Set the aspect ratio of the clipping area to match the viewport
     glMatrixMode(GL_PROJECTION); // To operate on the Projection matrix
 	glLoadIdentity(); // Reset the model-view matrix
-	if (key1 == 3 || key1 == 1){
+	if (key1 == 3){
 		glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
-		//glMatrixMode(GL_MODELVIEW); // To operate on Model-View matrix
 	}
-	if (key1 == 2){
-		glMatrixMode(GL_PROJECTION);
-		gluPerspective(45.0, (float)w/(float)h, 0.1f, 200.0);
-		gluLookAt(0.0, 0.0, 5.0,0.0, 0.0, 0.0,0.0, 1.0, 0.0); 
-		//glOrtho(0.0, 100.0, 0.0, 100.0,	-5.0 , 10.0);
-	}
+
 }
 
 /* Main function: GLUT runs as a console application starting at main()  */
