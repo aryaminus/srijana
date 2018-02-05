@@ -1,9 +1,9 @@
-# Srijana
-A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Network working.
+# Srijana - OpenGL based 2D Snake game
+A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Network used to display snake quad to move towards food in random state with both keyboard press and neural processing to loacte food
 
 **Currently in alpha state**
 
-[![Srijana features](https://i.imgur.com/tEFtibh.gif)](https://github.com/aryaminus/srijana)
+[![Srijana features](https://i.imgur.com/NiBBaBx.gif)](https://github.com/aryaminus/srijana)
 
 **Note:**
 Make sure you have opengl, freeglut3-dev & libgl1-mesa-dev 
@@ -24,26 +24,28 @@ $ g++ main.cpp -lGL -lglut -lGLU -o main
 $ ./main
 ```
 
-For Codeblocks:
+***For Codeblocks:***
 
 - Open local source file main.cpp from Srijana directory
 
-- **Before Build&Run**, goto:
+- **Before Build & Run**, goto:
+```
 -> Settings / Compiler / Global Compiler Settings / Linker Settings
+```
 
 - in Other linker options:
 ```
 -lGL -lglut -lGLU
 ```
 
-### TODO:
+## Todo
 - [x] Fix gluPerspective from glOrtho when moving from welcome() to DrawNeural()
 - [x] When clicked User/Play_Neural, resize is needed which needs to be fixed
 - [ ] Implementation of better algorithm than Q-learning
 - [x] Header to show score in window for DrawUser
 - [x] Setup for Keyboard press to navigate snake
 
-## Packages:
+## Reference
 1. <a href="https://github.com/Shanta-chan/Snake" target="_blank">snake</a>
 2. <a href="https://github.com/Ilyomix/Snake_Unix" target="_blank">snake-unix</a>
 3. <a href="https://github.com/arpithank/Computer-Graphics-Airplane-Game" target="_blank">airplane-game</a>
