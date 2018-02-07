@@ -1,5 +1,5 @@
 # Srijana - OpenGL based 2D Snake game
-A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Network used to display snake quad to move towards food in random state with both keyboard press and neural processing to loacte food
+A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Network used to display snake quad to move towards food in random state with both keyboard press and neural processing to locate food using artificial intelligence AI for automatic playing and score monitoring.
 
 **Currently in alpha state**
 
@@ -37,6 +37,8 @@ $ ./main
 ```
 -lGL -lglut -lGLU
 ```
+
+[![Working Flowchart](https://i.imgur.com/ZA5RDfW.png)](https://i.imgur.com/ZA5RDfW.png)
 
 ## Todo
 - [x] Fix gluPerspective from glOrtho when moving from welcome() to DrawNeural()

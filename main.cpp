@@ -487,7 +487,7 @@ void Tick(){
 
 void itera(){
 	iterations++; //Increment iterations
-	int sx = snake -> x;
+	int sx = snake -> x; //takes (4,0) value initially
 	int sy = snake -> y;
 
 	float inputs[6];
