@@ -82,6 +82,7 @@ int SCREENH = Scale * M;
 int num = 7;
 
 char sScore[15];
+char sSpeed[15];
 int Score = 0;
 
 struct
@@ -618,7 +619,7 @@ void DrawScore()
     glColor3f (1.1,1.0,1.0);
 
     glPushMatrix();
-    glTranslatef(SCREENW/(2.8), SCREENH/(1.05), 0);
+    glTranslatef(SCREENW/(5.4), SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, "Your score:");
     glPopMatrix();
@@ -626,9 +627,23 @@ void DrawScore()
     sprintf(sScore, "%9d", sc);
 
     glPushMatrix();
-    glTranslatef(SCREENW/2.4, SCREENH/(1.05), 0);
+    glTranslatef(SCREENW/5, SCREENH/(1.05), 0);
     glScalef(0.3f, 0.3f, 0.3f);
     draw_string(GLUT_STROKE_ROMAN, sScore);
+    glPopMatrix();
+
+	glPushMatrix();
+    glTranslatef(SCREENW/(1.6), SCREENH/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, "Your Speed:");
+    glPopMatrix();
+
+	sprintf(sSpeed, "%9d", tmp);
+
+    glPushMatrix();
+    glTranslatef(SCREENW/(1.2), SCREENH/(1.05), 0);
+    glScalef(0.3f, 0.3f, 0.3f);
+    draw_string(GLUT_STROKE_ROMAN, sSpeed);
     glPopMatrix();
 
     glFinish();
@@ -813,10 +828,11 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
 void timer(int = 0){
 	if (key1==2){
 		itera();
-		cout << "iterations : " << iterations << " score : " << sc << endl;
+		cout << "iterations : " << iterations << "speed" << tmp << " score : " << sc << endl;
 	}
 	if (key1==1)
 		Tick();
+		cout << "speed : " << tmp << " score : " << sc << endl;
 	glutPostRedisplay(); //marks the current window as needing to be redisplayed
 	glutTimerFunc(tmp, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
