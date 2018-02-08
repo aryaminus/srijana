@@ -1,9 +1,9 @@
 # Srijana - OpenGL based 2D Snake game
 A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Network used to display snake quad to move towards food in random state with both keyboard press and neural processing to locate food using artificial intelligence AI for automatic playing and score monitoring.
 
-**Currently in alpha state**
+**Currently in beta state**
 
-[![Srijana features](https://i.imgur.com/NiBBaBx.gif)](https://github.com/aryaminus/srijana)
+[![Srijana features](https://i.imgur.com/FDGpiwp.gif)](https://github.com/aryaminus/srijana)
 
 **Note:**
 Make sure you have opengl, freeglut3-dev & libgl1-mesa-dev 
