@@ -775,6 +775,11 @@ void keyboard(unsigned char key, int a, int b) {
 			if(tmp < 0) tmp = 0;
             tmp++;
             break;
+		case 'r': //restart
+			start();
+			DrawNeural();
+			sc =0; tmp = 50;
+            break;
         case 27:
             exit(0);
             break;
