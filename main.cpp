@@ -361,7 +361,7 @@ void move(){
 	}
 	snake -> mx = mx;
 	snake -> my = my;
-	snake -> x += mx;
+	snake -> x += mx; //Add with mx value depending un up down left right movement
 	snake -> y += my;
     // Setup increment case from x to mx within nexploration_ratet
 }
@@ -422,11 +422,6 @@ void Tick(){
         case 0:
             sx1 = sx;
 			sy1 = sy + 1;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(my == -1) rev();
 			else{
 				mx =  0;
@@ -436,11 +431,6 @@ void Tick(){
         case 1:
             sx1 = sx - 1;
 			sy1 = sy;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(mx == 1) rev();
 			else{
 				mx = -1;
@@ -450,11 +440,6 @@ void Tick(){
         case 2:
             sx1 = sx + 1;
 			sy1 = sy;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(mx == -1) rev();
 			else{
 				mx =  1;
@@ -464,11 +449,6 @@ void Tick(){
         case 3:
             sx1 = sx;
 			sy1 = sy - 1;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(my == 1) rev();
 			else{
 				mx =  0;
@@ -479,7 +459,7 @@ void Tick(){
 
     move();
 
-    sx1 = snake -> x;
+    sx1 = snake -> x; //takes the sx1 to snake value
 	sy1 = snake -> y;
 
 	float re = reward(sx, sy, sx1, sy1);
@@ -503,11 +483,6 @@ void itera(){
 		if(a == 0){
 			sx1 = sx + 1;
 			sy1 = sy;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(mx == -1) rev();
 			else{
 				mx =  1;
@@ -516,11 +491,6 @@ void itera(){
 		}else if(a == 1){
 			sx1 = sx - 1;
 			sy1 = sy;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(mx == 1) rev();
 			else{
 				mx = -1;
@@ -529,11 +499,6 @@ void itera(){
 		}else if(a == 2){
 			sx1 = sx;
 			sy1 = sy + 1;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(my == -1) rev();
 			else{
 				mx =  0;
@@ -542,11 +507,6 @@ void itera(){
 		}else{
 			sx1 = sx;
 			sy1 = sy - 1;
-			if(check_body(sx1, sy1)){
-				sq *last = get_last();
-				sx1 = last -> x - last -> mx;
-				sy1 = last -> y - last -> my;
-			}
 			if(my == 1) rev();
 			else{
 				mx =  0;
