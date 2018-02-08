@@ -363,6 +363,7 @@ float reward(int sx, int sy, int sx1, int sy1){
 		return -100000.0;
 	}else if(snake -> x > 18 || snake -> x < -18 || snake -> y > 18 || snake -> y < -18){
 		//border hit
+		sc = 0;
         start();
 		fail_count++;
 		return -1000.0;
@@ -752,16 +753,16 @@ void display(){
 /* Callback handler for normal-key event */
 void keyboard(unsigned char key, int a, int b) {
 	switch (key) {
-        case 'w': 
+        case 'w': //up
             dir = 0;
             break;
-        case 'd':
+        case 'd': //right
             dir = 2;
             break;
-        case 'a':
+        case 'a': //left
             dir = 1;
             break;
-        case 's':
+        case 's': //down
             dir = 3;
             break;
         case 'f': //set other food cordinate
