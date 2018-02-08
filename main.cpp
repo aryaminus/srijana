@@ -149,18 +149,7 @@ void set_f(){ //Setup food x,y cordinate and then make the snake p to move towar
 
 /* Initialize OpenGL Graphics */
 void init(){
-	glMatrixMode (GL_PROJECTION);
-}
-
-bool check_body(int x, int y){
-	if(x == snake -> nexploration_ratet -> x && y == snake -> nexploration_ratet -> y) return true; //nexploration_ratet x,y is same as x,y
-	return false;
-}
-
-sq *get_last(){
-	sq *p = snake;
-	while(p -> nexploration_ratet != NULL) p = p -> nexploration_ratet; //proceed till last nexploration_ratet
-	return p;
+	//glMatrixMode (GL_PROJECTION);
 }
 
 float check(int x, int y){
@@ -208,46 +197,22 @@ void rev(){
 float max_q(int sx, int sy, int food_x, int food_y){
 
 	float new_q = 0.0;
+
 	int sx1 = sx + 1; // increment in x-side
 	int sy1 = sy;
-	if(check_body(sx1, sy1)){
-		sq *last = get_last();
-		sx1 = last -> x - last -> mx; //decrement mx with x of last
-		sy1 = last -> y - last -> my; //decrement my with y of last
-	}
-
     float *out1 = get_q(sx1, sy1);
 
     sx1 = sx - 1; //decrement x-side
 	sy1 = sy;
- 	if(check_body(sx1, sy1)){
-		sq *last = get_last();
-		sx1 = last -> x - last -> mx;
-		sy1 = last -> y - last -> my;
-	}
-
 	float *out2 = get_q(sx1, sy1);
 
  	sx1 = sx;
 	sy1 = sy + 1; //increment y-side
-	if(check_body(sx1, sy1)){
-		sq *last = get_last();
-		sx1 = last -> x - last -> mx;
-		sy1 = last -> y - last -> my;
-	}
-
 	float *out3 = get_q(sx1, sy1);
 
 	sx1 = sx;
 	sy1 = sy - 1; //decrement y-side
-	if(check_body(sx1, sy1)){
-		sq *last = get_last();
-		sx1 = last -> x - last -> mx;
-		sy1 = last -> y - last -> my;
-	}
-
 	float *out4 = get_q(sx1, sy1);
-
 
 	//Now all conditions for value increment is checked, now compare each outcome values
     if(out1[0] > out2[0]){

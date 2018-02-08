@@ -6,6 +6,10 @@
         "*.tcc": "cpp",
         "ostream": "cpp",
         "iosfwd": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "istream": "cpp",
+        "optional": "cpp",
+        "system_error": "cpp",
+        "type_traits": "cpp"
     }
 }
