@@ -59,7 +59,7 @@ int sc           =      0;
 
 float old_q      =    0.0;
 
-//int tmp          =     50;
+int tmp          =     50;
 
 //int wa,ha;
 
@@ -655,10 +655,6 @@ void DrawNeural(){
 
 	DrawScore();
 
-	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
-
-	net -> init(); //reach neural_init
-
 	neural_check = true;
 
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color buffer and depth buffer
@@ -753,6 +749,16 @@ void keyboard(unsigned char key, int a, int b) {
         case 's':
             dir = 3;
             break;
+        case 'f': //set other food cordinate
+            set_f();
+            break;
+        case 'o': //decrease timer
+            tmp--;
+            break;
+        case 'p': //increase timer
+			if(tmp < 0) tmp = 0;
+            tmp++;
+            break;
         case 27:
             exit(0);
             break;
@@ -805,14 +811,14 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
 }
 
 void timer(int = 0){
-	if (neural_check){ //only when neural_check is true
+	if (key1==2){
 		itera();
 		cout << "iterations : " << iterations << " score : " << sc << endl;
 	}
 	if (key1==1)
 		Tick();
 	glutPostRedisplay(); //marks the current window as needing to be redisplayed
-	glutTimerFunc(80, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
+	glutTimerFunc(tmp, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
 
 void myReshape(int w, int h)
@@ -831,6 +837,10 @@ void myReshape(int w, int h)
 int main(int argc, char** argv){
     //srand(time(0));// Set random variable as current time
 
+	srand(time(NULL));
+	net = new neural(num_inputs, num_outputs, num_layers, 10, learning_rate); //Send neural with initial values
+	net -> init(); //reach neural_init
+
 	start(); //Start snake layout with initial values
 
     set_f(); //Setup food point cordinates
@@ -844,7 +854,7 @@ int main(int argc, char** argv){
 
     init();
 
-	glutTimerFunc (80,timer,0);     // First timer call immediately
+	glutTimerFunc (400,timer,0);     // First timer call immediately
 	glutReshapeFunc(myReshape);       // Register callback handler for window re-size event
     glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
 	glutMouseFunc(mouse);   // Register callback handler for mouse event
