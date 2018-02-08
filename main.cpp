@@ -638,7 +638,7 @@ void DrawScore()
     draw_string(GLUT_STROKE_ROMAN, "Your Speed:");
     glPopMatrix();
 
-	sprintf(sSpeed, "%9d", tmp);
+	sprintf(sSpeed, "%d", tmp);
 
     glPushMatrix();
     glTranslatef(SCREENW/(1.2), SCREENH/(1.05), 0);
