@@ -777,7 +777,6 @@ void keyboard(unsigned char key, int a, int b) {
             break;
 		case 'r': //restart
 			start();
-			DrawNeural();
 			sc =0; tmp = 50;
             break;
         case 27:
@@ -834,11 +833,11 @@ void mouse(int button, int state, int ax, int ay)            // takes input from
 void timer(int = 0){
 	if (key1==2){
 		itera();
-		cout << "iterations : " << iterations << "speed" << tmp << " score : " << sc << endl;
+		cout << "iterations : " << iterations << " speed : " << tmp << " score : " << sc << endl;
 	}
 	if (key1==1)
 		Tick();
-		cout << "speed : " << tmp << " score : " << sc << endl;
+		//cout << "speed : " << tmp << " score : " << sc << endl;
 	glutPostRedisplay(); //marks the current window as needing to be redisplayed
 	glutTimerFunc(tmp, timer, 0); //registers a timer callback to be triggered in a specified number of milliseconds
 }
