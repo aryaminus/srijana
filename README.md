@@ -3,7 +3,7 @@ A C++ and OpenGL based game made for 5th semester Graphics Project and Neural Ne
 
 **Currently in beta state**
 
-[![Srijana features](https://i.imgur.com/FDGpiwp.gif)](https://github.com/aryaminus/srijana)
+[![Srijana features](https://i.imgur.com/FDGpiwp.gif)](https://youtu.be/Cpj3XVdsK_g)
 
 **Note:**
 Make sure you have opengl, freeglut3-dev & libgl1-mesa-dev 

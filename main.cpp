@@ -85,12 +85,6 @@ char sScore[15];
 char sSpeed[15];
 int Score = 0;
 
-struct
-{
-    int x;
-    int y;
-} s[100];
-
 void drawString(float x,float y,float z,void *font,char *string)
 {
 	char *c;
